@@ -20,7 +20,7 @@
   "license": "GNU GPL",
   "devDependencies": {
     "babel-core": "^6.26.3",
-    "browser-sync": "^2.24.4",
+    "browser-sync": "^2.26.7",
     "del": "^3.0.0",
     "glob": "^7.1.2",
     "gulp": "^3.9.1",
@@ -38,7 +38,7 @@
     "run-sequence": "^2.2.1"
   },
   "dependencies": {
-    "angular": "1.5.8",
+    "angular": "^1.7.9",
     "angular-sanitize": "1.5.8",
     "angular-summernote": "0.8.1",
     "anythingslider": "https://github.com/CSS-Tricks/AnythingSlider/archive/v1.9.4.tar.gz",
@@ -65,7 +65,7 @@
     "i18next": "9.0.1",
     "i18next-browser-languagedetector": "2.0.0",
     "i18next-xhr-backend": "1.4.3",
-    "jquery": "3.1.1",
+    "jquery": "^3.4.1",
     "jquery-datetimepicker": "2.5.20",
     "jscolor": "EastDesire/jscolor",
     "jszip": "3.1.5",

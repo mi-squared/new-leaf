@@ -795,6 +795,11 @@ $oemr_ui = new OemrUI($arrOeUiSettings);
                                             title="<?php echo xla('Generate and download X12 encounter claim batch') ?>"><?php echo xlt('Generate X12 Encounter') ?></button>
                                 </li>
                             <?php } ?>
+                            <!--        replace Medical with TR3-->
+                            <?php if (1) { ?>
+                                <li><button type="submit" class="btn btn-link btn-download" name="bn_x12_tr3" onclick="confirmActions(event, '1');"
+                                            title="<?php echo xla('Generate and download X12 encounter claim batch')?>" ><?php echo xla('Generate X12 Encounter for with TR3 format')?></button></li>
+                            <?php } ?>
                         </ul>
                     </div>
                     <div class="btn-group">

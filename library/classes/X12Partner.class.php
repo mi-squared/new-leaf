@@ -10,6 +10,7 @@ class X12Partner extends ORDataObject
 
     var $id;
     var $name;
+    var $x12_submitter_name; //***MI2 Add
     var $id_number;
     var $x12_isa01; //
     var $x12_isa02; //
@@ -50,6 +51,15 @@ class X12Partner extends ORDataObject
         if ($id != "") {
             $this->populate();
         }
+        //***MI2 Add - make sure that we have this column in the table
+        $result = sqlQuery("SHOW COLUMNS FROM `x12_partners` LIKE 'x12_submitter_name'");
+
+        if(($result) == 0) {
+            // do your stuff
+            sqlQuery("alter table x12_partners add x12_submitter_name VARCHAR(255) ");
+        }
+
+
     }
 
     function x12_partner_factory()
@@ -81,6 +91,15 @@ class X12Partner extends ORDataObject
     function get_name()
     {
         return $this->name;
+    }
+    function get_x12_submitter_name() //***MI2 Add
+    {
+        return $this->x12_submitter_name;
+    }
+
+    function set_x12_submitter_name($string) //***MI2 Add
+    {
+        $this->x12_submitter_name = $string;
     }
 
     function set_name($string)

@@ -14,6 +14,7 @@
  * @copyright Copyright (c) 2016 Terry Hill <terry@lillysystems.com>
  * @copyright Copyright (c) 2017-2019 Jerry Padgett <sjpadgett@gmail.com>
  * @copyright Copyright (c) 2018-2019 Stephen Waite <stephen.waite@cmsvt.com>
+ * @copyright Copyright (c) 2020-2021 Daniel Pflieger <daniel@mi-squared.com> <daniel@growlingflea.com>
  * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
  */
 
@@ -81,7 +82,7 @@ function append_claim(&$segs)
             if (!$bat_content) {
                 $bat_sendid = trim($elems[6]);
                 $bat_recvid = trim($elems[8]);
-                $bat_sender = $GS02 ? $GS02 : $bat_sendid;
+                $bat_sender = isset($GS02) ? $GS02 : $bat_sendid; //***MS Modify
                 $bat_content = substr($seg, 0, 70) . "$bat_yymmdd*$bat_hhmm*" . $elems[11] . "*" . $elems[12] . "*$bat_icn*" . $elems[14] . "*" . $elems[15] . "*:~";
             }
             continue;
@@ -176,7 +177,8 @@ function process_form($ar)
     // Set up crypto object
     $cryptoGen = new CryptoGen();
 
-    if (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) || isset($ar['bn_process_hcfa']) || isset($ar['bn_hcfa_txt_file']) || isset($ar['bn_process_hcfa_form'])
+    //***MI2 modify - added in ability to handle tr3 format
+    if (isset($ar['bn_x12']) ||  isset($ar['bn_x12_tr3']) || isset($ar['bn_x12_encounter']) || isset($ar['bn_process_hcfa']) || isset($ar['bn_hcfa_txt_file']) || isset($ar['bn_process_hcfa_form'])
         || isset($ar['bn_process_ub04_form']) || isset($ar['bn_process_ub04']) || isset($ar['bn_ub04_x12'])) {
         if ($GLOBALS['billing_log_option'] == 1) {
             if (file_exists($GLOBALS['OE_SITE_DIR'] . "/documents/edi/process_bills.log")) {
@@ -201,6 +203,19 @@ function process_form($ar)
     }
     $bat_content = "";
     $claim_count = 0;
+    $last = 0;
+    //***MS modify - I don't remember the reason for this
+    //get the last element of the array that we are printing to the screen.
+    foreach ($ar['claims'] as $claimid => $claim_array){
+        if (isset($claim_array['bill'])){
+
+            $last = $claimid;
+        }
+
+    }
+
+
+
     foreach ($ar['claims'] as $claimid => $claim_array) {
         $ta = explode("-", $claimid);
         $patient_id = $ta[0];
@@ -239,7 +254,8 @@ function process_form($ar)
                 if ($clear_claim) {
                     $tmp = BillingUtilities::updateClaim(true, $patient_id, $encounter, $payer_id, $payer_type, 2); // $sql .= " billed = 1, ";
                 }
-                if (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) && !$clear_claim) {
+                //***MI2 Modofy - again replace mediccal with TR3
+                if (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) || isset($ar['bn_x12_tr3']) && !$clear_claim) {
                     $tmp = BillingUtilities::updateClaim(true, $patient_id, $encounter, $payer_id, $payer_type, 1, 1, '', $target, $claim_array['partner']);
                 } elseif (isset($ar['bn_ub04_x12'])) {
                     $ub04id = get_ub04_array($patient_id, $encounter);
@@ -281,9 +297,30 @@ function process_form($ar)
                     $bill_info[] = xl("Claim ") . $claimid . xl(" was marked as billed only.") . "\n";
                 } elseif (isset($ar['bn_reopen'])) {
                     $bill_info[] = xl("Claim ") . $claimid . xl(" has been re-opened.") . "\n";
-                } elseif (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter'])) {
+                } elseif (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) ) {
                     $log = '';
                     $segs = explode("~\n", X12_5010_837P::gen_x12_837($patient_id, $encounter, $log, isset($ar['bn_x12_encounter'])));
+                    $hlog .= $log;
+                    append_claim($segs);
+                    if ($validatePass) {
+                        validate_payer_reset($payer_id_held, $patient_id, $encounter);
+                        continue;
+                    }
+                    if (!BillingUtilities::updateClaim(false, $patient_id, $encounter, -1, -1, 2, 2, $bat_filename)) {
+                        $bill_info[] = xl("Internal error: claim ") . $claimid . xl(" not found!") . "\n";
+                    }
+                }elseif (isset($ar['bn_x12_tr3'])) {
+                    $log = '';
+                    $log = '';
+                    if($claimid == $last){
+
+                        $LAST = true;
+
+                    }else{
+
+                        $LAST = false;
+                    }
+                    $segs = explode("~\n", X12_5010_837P::gen_x12_837_tr3($patient_id, $encounter, $log, isset($ar['bn_x12_encounter']), $LAST));
                     $hlog .= $log;
                     append_claim($segs);
                     if ($validatePass) {
@@ -408,7 +445,7 @@ function process_form($ar)
             $wrap = "<!DOCTYPE html><html><head></head><body><div><pre>" . text($format_bat) . "</pre></div></body></html>";
             echo $wrap;
             exit();
-        } elseif (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) || isset($ar['bn_ub04_x12'])) {
+        } elseif (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) || isset($ar['bn_ub04_x12']) || isset($ar['bn_x12_tr3'])) {
             global $bat_content;
             append_claim_close();
             $format_bat = str_replace('~', PHP_EOL, $bat_content);
@@ -433,7 +470,10 @@ function process_form($ar)
         }
         die(xlt("Unknown Selection"));
     } else {
-        if (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) || isset($ar['bn_ub04_x12'])) {
+
+        //***MI2 modify - replace medical with TR3
+
+        if (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) || isset($ar['bn_ub04_x12']) || isset($ar['bn_x12_tr3'])) {
             append_claim_close();
             send_batch();
             exit();
