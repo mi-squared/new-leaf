@@ -1363,7 +1363,16 @@ $GLOBALS_METADATA = array(
             'bool',                           // data type
             '0',                              // default
             xl('Enable percent-based price levels')
+        ),
+
+        'gen_x12_based_on_ins_co' => array(
+            xl('Generate X-12 Based On Insurance Company'),
+            'bool',                           // data type
+            '0',                              // default = false
+            xl('For sending claims directly to insurance company, based on X12 Partner Settings')
         )
+
+
     ),
 
     // E-Sign Tab
