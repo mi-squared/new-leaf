@@ -289,6 +289,18 @@ function process_form($ar)
     }
     $bat_content = "";
     $claim_count = 0;
+    $last = 0;
+
+    //***MS modify
+    //get the last element of the array that we are printing to the screen.
+    foreach ($ar['claims'] as $claimid => $claim_array){
+        if (isset($claim_array['bill'])){
+            $last = $claimid;
+        }
+    }
+
+
+
     foreach ($ar['claims'] as $claimid => $claim_array) {
         $ta = explode("-", $claimid);
         $patient_id = $ta[0];
@@ -369,9 +381,30 @@ function process_form($ar)
                     $bill_info[] = xl("Claim ") . $claimid . xl(" was marked as billed only.") . "\n";
                 } elseif (isset($ar['bn_reopen'])) {
                     $bill_info[] = xl("Claim ") . $claimid . xl(" has been re-opened.") . "\n";
-                } elseif (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter'])) {
+                } elseif (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) && !$GLOBALS['gen_x12_based_on_ins_co']) {
                     $log = '';
                     $segs = explode("~\n", X125010837P::genX12837P($patient_id, $encounter, $log, isset($ar['bn_x12_encounter'])));
+                    $hlog .= $log;
+                    append_claim($segs);
+                    if ($validatePass) {
+                        validate_payer_reset($payer_id_held, $patient_id, $encounter);
+                        continue;
+                    }
+                    if (!BillingUtilities::updateClaim(false, $patient_id, $encounter, -1, -1, 2, 2, $bat_filename)) {
+                        $bill_info[] = xl("Internal error: claim ") . $claimid . xl(" not found!") . "\n";
+                    }
+                }elseif (isset($ar['bn_x12']) || isset($ar['bn_x12_encounter']) && $GLOBALS['gen_x12_based_on_ins_co']) {
+                    $log = '';
+                    $log = '';
+                    if($claimid == $last){
+
+                        $LAST = true;
+
+                    }else{
+
+                        $LAST = false;
+                    }
+                    $segs = explode("~\n", X12501837P::gen_x12_837_tr3($patient_id, $encounter, $log, isset($ar['bn_x12_encounter']), $LAST));
                     $hlog .= $log;
                     append_claim($segs);
                     if ($validatePass) {
