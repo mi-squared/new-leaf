@@ -1480,7 +1480,22 @@ class X125010837P
         $log .= "\n";
         return $out;
     }
-    //***tr3 for multiple billing providers per claim
+
+    /**
+     * This function processes claims and outputs "TR3" format,
+     * for multiple billing providers per claim. This format is the typical
+     * format accepted by insurance companies, and allows OpenEMR to submit
+     * claims directly to insurance compainies without a clearing house.
+     *
+     * @author Daniel Pflieger <daniel@mi-squared.com>, <daniel@growlingflea.com>
+     *
+     * @param $pid
+     * @param $encounter
+     * @param $log
+     * @param false $encounter_claim
+     * @param $SEFLAG
+     * @return string|string[]|null
+     */
     public static function gen_x12_837_tr3($pid, $encounter, &$log, $encounter_claim = false, $SEFLAG)
     {
         $today = time();
@@ -2964,6 +2979,4 @@ class X125010837P
         $log .= "\n";
         return $out;
     }
-
-
 }
