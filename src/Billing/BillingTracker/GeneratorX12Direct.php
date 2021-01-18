@@ -152,7 +152,7 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
             // If the global is enabled to SFTP claim files, tell the user
             if ($GLOBALS['auto_sftp_claims_to_x12_partner']) {
-                $html .= "<div class='alert alert-primary' role='alert'>" . xl("Sending Claims via STFP. Check status on SFTP Billing Tracker") . "</div>";
+                $html .= "<div class='alert alert-primary' role='alert'>" . xl("Sending Claims via STFP. Check status on the `Claim File Tracker`") . "</div>";
             }
 
             // Build the download URLs for our claim files so we can present them to the

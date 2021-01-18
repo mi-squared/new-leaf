@@ -21,7 +21,7 @@ use OpenEMR\OeUI\OemrUI;
 <html>
 <head>
     <?php Header::setupHeader(['datatables', 'datatables-colreorder', 'datatables-dt', 'datatables-bs']); ?>
-    <title><?php echo xlt("Claim Batch Tracker"); ?></title>
+    <title><?php echo xlt("Claim File Tracker"); ?></title>
     <style>
         table.dataTable td.details-control:before {
             content: '\f152';
@@ -55,7 +55,22 @@ use OpenEMR\OeUI\OemrUI;
                         "data": null,
                         "defaultContent": ''
                     },
-                    { "data": "status" },
+                    {
+                        "data": "status",
+                        "render": function(data, type, row, meta){
+                            if(type === 'display'){
+                                if (data == 'success') {
+                                    data = '<span class="badge badge-success">' + data + '</span>';
+                                } else if (data == 'waiting') {
+                                    data = '<span class="badge badge-info">' + data + '</span>';
+                                } else {
+                                    data = '<span class="badge badge-warning">' + data + '</span>';
+                                }
+                            }
+
+                            return data;
+                        }
+                    },
                     { "data": "x12_partner_name" },
                     {
                         "data": "x12_filename",

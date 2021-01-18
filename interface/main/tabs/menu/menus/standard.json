@@ -503,7 +503,7 @@
         "global_req": "enable_edihistory_in_left_menu"
       },
       {
-        "label": "SFTP Billing Tracker",
+        "label": "Claim File Tracker",
         "menu_id": "biltrk0",
         "target": "biltrk",
         "url": "/interface/billing/billing_tracker.php",
