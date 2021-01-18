@@ -37,14 +37,17 @@ use OpenEMR\OeUI\OemrUI;
     </style>
     <script type="text/javascript">
         $(document).ready(function() {
-            const serverUrl = "billing_tracker_ajax.php?csrf_token_form=" + <?php echo js_url(CsrfUtils::collectCsrfToken()); ?>;
+            const serverUrl = "<?php echo $GLOBALS['webroot']; ?>/library/ajax/billing_tracker_ajax.php?csrf_token_form=" + <?php echo js_url(CsrfUtils::collectCsrfToken()); ?>;
             const oTable = $('#billing-tracker-table').DataTable({
                 "processing": true,
                 // next 2 lines invoke server side processing
-                "serverSide": true,
-                // NOTE kept the legacy command 'sAjaxSource' here for now since was unable to get
-                // the new 'ajax' command to work.
-                "sAjaxSource": serverUrl,
+                "ajax": {
+                    "type" : "GET",
+                    "url" : serverUrl,
+                    "dataSrc": function (json) {
+                        return json.data;
+                    }
+                },
                 "columns": [
                     {
                         "class": 'details-control',
@@ -52,14 +55,29 @@ use OpenEMR\OeUI\OemrUI;
                         "data": null,
                         "defaultContent": ''
                     },
-                    { "data": "id" },
                     { "data": "status" },
                     { "data": "x12_partner_name" },
-                    { "data": "x12_filename" },
+                    {
+                        "data": "x12_filename",
+                        "render": function(data, type, row, meta){
+                            if(type === 'display'){
+                                const url = '<?php echo $GLOBALS['webroot']; ?>/interface/billing/get_claim_file.php?key=' +
+                                    data + '&csrf_token_form=<?php echo CsrfUtils::collectCsrfToken(); ?>';
+                                data = '<a href="' + url + '">' + data + '</a>';
+                            }
+
+                            return data;
+                        }
+                    },
                     { "data": "created_at" },
                     { "data": "updated_at" },
                 ],
                 "order": [[1, 'asc']]
+            });
+
+            oTable.on('preXhr.dt', function (e, settings, data) {
+                console.log("before ajax call");
+                top.restoreSession();
             });
 
             /* Formatting function for row details - modify as you need */
@@ -117,7 +135,6 @@ use OpenEMR\OeUI\OemrUI;
                  <thead>
                  <tr>
                      <th>&nbsp;</th>
-                     <th><?php echo xl('Batch ID') ?></th>
                      <th><?php echo xl('Status') ?></th>
                      <th><?php echo xl('X-12 Partner') ?></th>
                      <th><?php echo xl('File') ?></th>
@@ -128,7 +145,6 @@ use OpenEMR\OeUI\OemrUI;
                  <tfoot>
                  <tr>
                      <th>&nbsp;</th>
-                     <th><?php echo xl('Batch ID') ?></th>
                      <th><?php echo xl('Status') ?></th>
                      <th><?php echo xl('X-12 Partner') ?></th>
                      <th><?php echo xl('File') ?></th>

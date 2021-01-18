@@ -34,9 +34,13 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
         while ($row = sqlFetchArray($result)) {
 
             $has_dir = true;
-            // If the local directory doesn't exist, attempt to create it
-            if (isset($row['x12_sftp_local_dir']) &&
+            if (!isset($row['x12_sftp_local_dir'])) {
+                // Local Directory not set
+                $has_dir = false;
+                $this->printToScreen(xl("No directory for X12 partner " . $row['name']));
+            } else if (isset($row['x12_sftp_local_dir']) &&
                 !is_dir($row['x12_sftp_local_dir'])) {
+                // If the local directory doesn't exist, attempt to create it
                 $has_dir = mkdir($row['x12_sftp_local_dir'], '644', true);
                 if (false === $has_dir) {
                     $this->printToScreen(xl("Could not create directory for X12 partner " . $row['name']));
@@ -109,6 +113,9 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
     {
         $format_bat = "";
         $created_batches = [];
+        // Loop through all of the X12 batch files we've created, one per x-12 partner,
+        // and depending on the action we're running, either write the final claim
+        // to disk, or format the content for printing to the screen.
         foreach ($this->x12_partner_batches as $x12_partner_id => $x12_partner_batch) {
 
             if (empty($x12_partner_batch->getBatContent())) {
@@ -136,12 +143,20 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
             $wrap = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'><pre>" . text($format_bat) . "</pre></div></body></html>";
             echo $wrap;
+            exit();
         } else if ($this->getAction() === BillingProcessor::NORMAL) {
+
+            // In the "normal" operation, we have written the batch files to disk above, and
+            // need to build a presentation for the user to download them.
             $html = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'>";
+
             // If the global is enabled to SFTP claim files, tell the user
             if ($GLOBALS['auto_sftp_claims_to_x12_partner']) {
                 $html .= "<div class='alert alert-primary' role='alert'>" . xl("Sending Claims via STFP. Check status on SFTP Billing Tracker") . "</div>";
             }
+
+            // Build the download URLs for our claim files so we can present them to the
+            // user for download.
             $html .= "<ul class='list-group'>";
             foreach ($created_batches as $created_batch) {
                 $file = $created_batch->getBatFilename();
@@ -151,6 +166,7 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             }
             $html .= "</ul>";
             $html .= "</div></body></html>";
+            $this->logger->setShowCloseButton(false);
             echo $html;
         }
 

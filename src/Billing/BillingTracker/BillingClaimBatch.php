@@ -37,7 +37,7 @@ class BillingClaimBatch
         // Seconds since 1/1/1970 00:00:00 GMT will be our interchange control number
         // but since limited to 9 char must be without leading 1
         $this->bat_icn = substr((string)$this->bat_time, 1, 9);
-        $this->bat_filename = date("Y-m-d-Hi", $this->bat_time) . "-batch";
+        $this->bat_filename = date("Y-m-d-His", $this->bat_time) . "-batch";
         $this->bat_filedir = $GLOBALS['OE_SITE_DIR'] . DIRECTORY_SEPARATOR . "documents" . DIRECTORY_SEPARATOR . "edi";
     }
 
@@ -97,7 +97,7 @@ class BillingClaimBatch
      */
     public function write_batch_file($x12_partner_id = null)
     {
-        $error = false;
+        $success = true;
         // If a writable edi directory exists, log the batch to it.
         // I guarantee you'll be glad we did this. :-)
         if ($this->bat_filedir !== false) {
@@ -106,16 +106,15 @@ class BillingClaimBatch
                 fwrite($fh, $this->bat_content);
                 fclose($fh);
             } else {
-                $error = true;
+                $success = false;
             }
         }
 
         // If we are automatically uploading claims to X12 partners, do that here right after we
         // write the 'official' batch file
-        if (false === $error &&
+        if (true === $success &&
             $GLOBALS['auto_sftp_claims_to_x12_partner']) {
             if ($x12_partner_id !== null) {
-                $now = date('Y-m-d h:i:s');
                 // If this is an array, queue the batchfile to send to all x-12 partners
                 if (is_array($x12_partner_id)) {
                     foreach( $x12_partner_id as $id) {
@@ -123,9 +122,7 @@ class BillingClaimBatch
                             'x12_partner_id' => $id,
                             'x12_filename' => $this->bat_filename,
                             'status' => X12RemoteTracker::STATUS_WAITING,
-                            'messages' => '',
-                            'created_at' => $now,
-                            'updated_at' => $now
+                            'messages' => ''
                         ]);
                     }
                 } else {
@@ -133,15 +130,13 @@ class BillingClaimBatch
                         'x12_partner_id' => $x12_partner_id,
                         'x12_filename' => $this->bat_filename,
                         'status' => X12RemoteTracker::STATUS_WAITING,
-                        'messages' => '',
-                        'created_at' => $now,
-                        'updated_at' => $now
+                        'messages' => ''
                     ]);
                 }
             }
         }
 
-        return $error;
+        return $success;
     }
 
     public function append_claim(&$segs)

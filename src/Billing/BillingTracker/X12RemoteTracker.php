@@ -36,7 +36,12 @@ class X12RemoteTracker extends BaseService
         'x12_sftp_login' => 'X12 SFTP Login',
         'x12_sftp_pass' => 'X12 SFTP Password',
         'x12_sftp_remote_dir' => 'X12 SFTP Remote Dir',
+        'x12_sftp_local_dir' => 'X12 SFTP Local Dir',
     ];
+
+    const SELECT = "SELECT R.id, R.x12_filename, R.status, R.messages, R.created_at, R.updated_at,
+       P.name, P.id AS x12_partner_id, P.x12_sftp_host, P.x12_sftp_port, P.x12_sftp_login, P.x12_sftp_pass,
+       P.x12_sftp_remote_dir, P.x12_sftp_local_dir FROM x12_remote_tracker R";
 
     protected $validationMessages = [];
 
@@ -74,7 +79,7 @@ class X12RemoteTracker extends BaseService
             $sftp = new SFTP($x12_remote['x12_sftp_host'], $x12_remote['x12_sftp_port']);
             if (false === $sftp->login($x12_remote['x12_sftp_login'], $x12_remote['x12_sftp_pass'])) {
                 $x12_remote['status'] = self::STATUS_LOGIN_ERROR;
-                $sftp_error_message = $sftp->getSFTPErrors();
+                $sftp_error_message = print_r($sftp->getSFTPErrors(), true);
                 $x12_remote['messages'] = "Invalid Username or Password.\n $sftp_error_message\n";
                 $remoteTracker->update($x12_remote);
                 continue;
@@ -82,7 +87,7 @@ class X12RemoteTracker extends BaseService
 
             if (false === $sftp->chdir($x12_remote['x12_sftp_remote_dir'])) {
                 $x12_remote['status'] = self::STATUS_CHDIR_ERROR;
-                $sftp_error_message = $sftp->getSFTPErrors();
+                $sftp_error_message = print_r($sftp->getSFTPErrors(), true);
                 $x12_remote['messages'] = "Could not change to SFTP remote DIR.\n $sftp_error_message\n";
                 $remoteTracker->update($x12_remote);
                 continue;
@@ -95,7 +100,7 @@ class X12RemoteTracker extends BaseService
             // Upload the file
             if (false === $sftp->put($x12_remote['x12_filename'], $claim_file_contents)) {
                 $x12_remote['status'] = self::STATUS_UPLOAD_ERRROR;
-                $sftp_error_message = $sftp->getSFTPErrors();
+                $sftp_error_message = print_r($sftp->getSFTPErrors(), true);
                 $x12_remote['messages'] = "Could not upload file.\n $sftp_error_message\n";
                 $remoteTracker->update($x12_remote);
             }
@@ -123,6 +128,8 @@ class X12RemoteTracker extends BaseService
 
     public static function create($fields)
     {
+        $fields['created_at'] = date('Y-m-d h:i:s');
+        $fields['updated_at'] = date('Y-m-d h:i:s');
         $remoteTracker = new X12RemoteTracker();
         return $remoteTracker->insert($fields);
     }
@@ -143,24 +150,64 @@ class X12RemoteTracker extends BaseService
 
     public function update($fields)
     {
+        $fields['updated_at'] = date('Y-m-d h:i:s');
         $query = $this->buildUpdateColumns($fields);
         $sql = "UPDATE x12_remote_tracker SET ";
         $sql .= $query['set'];
+        $sql .= "WHERE id = ?";
+        array_push( $query['bind'], $fields['id']);
 
         $results = sqlStatement($sql, $query['bind']);
 
         return $results;
     }
 
+    protected function onlyRealFields($passed_in)
+    {
+        $realFields = [];
+        foreach ($passed_in as $key => $value) {
+            if (in_array($key, $this->getFields())) {
+                $realFields[$key] = $value;
+            }
+        }
+        return $realFields;
+    }
+
+    protected function buildInsertColumns($passed_in = array())
+    {
+        return parent::buildInsertColumns($this->onlyRealFields($passed_in));
+    }
+
+    protected function buildUpdateColumns($passed_in = array())
+    {
+        return parent::buildUpdateColumns($this->onlyRealFields($passed_in));
+    }
+
+    /**
+     * Get the remote tracking entries by their status with the newest first
+     *
+     * @param string $status
+     * @return array
+     */
     public function fetchByStatus($status = self::STATUS_WAITING)
     {
-        $waiting = $this->selectHelper("SELECT * FROM x12_remote_tracker R", [
+        $waiting = $this->selectHelper(self::SELECT, [
             'join' => "JOIN x12_partners P ON P.id = R.x12_partner_id",
             'where' => "WHERE `status` = ?",
+            'order' => 'ORDER BY R.created_at DESC',
             'data' => [$status]
         ]);
 
         return $waiting;
     }
 
+    public function fetchAll()
+    {
+        $all = $this->selectHelper(self::SELECT, [
+            'join' => "JOIN x12_partners P ON P.id = R.x12_partner_id",
+            'order' => 'ORDER BY R.updated_at DESC'
+        ]);
+
+        return $all;
+    }
 }

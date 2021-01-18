@@ -48,17 +48,17 @@ $logger = $billingProcessor->execute();
             <div class="col-12">
                 <h3><?php echo xlt('Billing queue results'); ?>:</h3>
                 <ul>
-                    <li>
-                        <?php
-                        foreach ($logger->bill_info() as $infoline) {
-                            echo nl2br($infoline);
-                        }
-                        ?>
-                    </li>
+                    <?php  foreach ($logger->bill_info() as $infoline) { ?>
+                        <li>
+                            <?php echo nl2br($infoline); ?>
+                        </li>
+                    <?php } ?>
                 </ul>
+                <?php if ($logger->showCloseButton()) { ?>
                 <button class="btn btn-secondary btn-sm btn-cancel" id="close-link">
                     <?php echo xlt('Close'); ?>
                 </button>
+                <?php } ?>
             </div>
         </div>
     </div>

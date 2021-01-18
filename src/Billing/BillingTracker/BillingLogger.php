@@ -10,6 +10,7 @@ class BillingLogger
 {
     protected $bill_info = [];
     protected $hlog;
+    protected $showCloseButton = true;
 
     public function __construct()
     {
@@ -46,5 +47,21 @@ class BillingLogger
     public function hlog()
     {
         return $this->hlog;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowCloseButton(): bool
+    {
+        return $this->showCloseButton;
+    }
+
+    /**
+     * @param bool $showCloseButton
+     */
+    public function setShowCloseButton(bool $showCloseButton): void
+    {
+        $this->showCloseButton = $showCloseButton;
     }
 }
