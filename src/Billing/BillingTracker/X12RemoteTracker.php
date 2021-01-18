@@ -1,0 +1,166 @@
+<?php
+/**
+ * Model that provides tracking information for a run of claim processing using
+ * the billing manager. Each run is saved as an entry in the billing_tracker_batch
+ * table.
+ *
+ * @package   OpenEMR
+ * @link      http://www.open-emr.org
+ * @author    Ken Chapple <ken@mi-squared.com>
+ * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
+ * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
+ */
+
+namespace OpenEMR\Billing\BillingTracker;
+
+
+use OpenEMR\Services\BaseService;
+use phpseclib\Net\SFTP;
+
+class X12RemoteTracker extends BaseService
+{
+    const STATUS_WAITING = 'waiting';
+    const STATUS_PARAMETER_ERROR = 'parameter-error';
+    const STATUS_CLAIM_FILE_ERROR = 'claim-file-error';
+    const STATUS_LOGIN_ERROR = 'login-error';
+    const STATUS_CHDIR_ERROR = 'chdir-error';
+    const STATUS_IN_PROGRESS = 'in-progress';
+    const STATUS_UPLOAD_ERRROR = 'upload-error';
+    const STATUS_SUCCESS = 'success';
+
+    const TABLE_NAME = 'x12_remote_tracker';
+
+    protected static $x12_partner_field_keys = [
+        'x12_sftp_host' => 'X12 SFTP Host',
+        'x12_sftp_port' => 'X12 SFTP Port',
+        'x12_sftp_login' => 'X12 SFTP Login',
+        'x12_sftp_pass' => 'X12 SFTP Password',
+        'x12_sftp_remote_dir' => 'X12 SFTP Remote Dir',
+    ];
+
+    protected $validationMessages = [];
+
+    public function __construct()
+    {
+        parent::__construct(self::TABLE_NAME);
+    }
+
+    public static function sftpSendWaitingFiles()
+    {
+        $remoteTracker = new X12RemoteTracker();
+        $x12_remotes = $remoteTracker->fetchByStatus(self::STATUS_WAITING);
+        foreach ($x12_remotes as $x12_remote) {
+
+            // Make sure required parameters are filled in on the X12 partner form, otherwise, log a message
+            if (false === $remoteTracker->validateSFTPCredentials($x12_remote)) {
+                // there was a problem, get messages, log them and continue
+                $x12_remote['status'] = self::STATUS_PARAMETER_ERROR;
+                $x12_remote['messages'] = implode("\n", $remoteTracker->validationMessages);
+                $remoteTracker->update($x12_remote);
+                continue;
+            }
+
+            // Make sure local claim file exists and can we have permission to read it
+            $claim_file = $x12_remote['x12_sftp_local_dir'] . $x12_remote['x12_filename'];
+            $claim_file_contents = file_get_contents($claim_file);
+            if (false === $claim_file_contents) {
+                $x12_remote['status'] = self::STATUS_CLAIM_FILE_ERROR;
+                $x12_remote['messages'] = "Could not open local claim file: `$claim_file`";
+                $remoteTracker->update($x12_remote);
+                continue;
+            }
+
+            // Attempt to login
+            $sftp = new SFTP($x12_remote['x12_sftp_host'], $x12_remote['x12_sftp_port']);
+            if (false === $sftp->login($x12_remote['x12_sftp_login'], $x12_remote['x12_sftp_pass'])) {
+                $x12_remote['status'] = self::STATUS_LOGIN_ERROR;
+                $sftp_error_message = $sftp->getSFTPErrors();
+                $x12_remote['messages'] = "Invalid Username or Password.\n $sftp_error_message\n";
+                $remoteTracker->update($x12_remote);
+                continue;
+            }
+
+            if (false === $sftp->chdir($x12_remote['x12_sftp_remote_dir'])) {
+                $x12_remote['status'] = self::STATUS_CHDIR_ERROR;
+                $sftp_error_message = $sftp->getSFTPErrors();
+                $x12_remote['messages'] = "Could not change to SFTP remote DIR.\n $sftp_error_message\n";
+                $remoteTracker->update($x12_remote);
+                continue;
+            }
+
+            // Change status from waiting to in-progress
+            $x12_remote['status'] = self::STATUS_IN_PROGRESS;
+            $remoteTracker->update($x12_remote);
+
+            // Upload the file
+            if (false === $sftp->put($x12_remote['x12_filename'], $claim_file_contents)) {
+                $x12_remote['status'] = self::STATUS_UPLOAD_ERRROR;
+                $sftp_error_message = $sftp->getSFTPErrors();
+                $x12_remote['messages'] = "Could not upload file.\n $sftp_error_message\n";
+                $remoteTracker->update($x12_remote);
+            }
+
+            // Change status from waiting to in-progress
+            $x12_remote['status'] = self::STATUS_SUCCESS;
+            $remoteTracker->update($x12_remote);
+
+            // Disconnect from the remote server
+            $sftp->disconnect();
+        }
+    }
+
+    protected function validateSFTPCredentials($credentials) {
+        $this->validationMessages = [];
+        $valid = true;
+        foreach (self::$x12_partner_field_keys as $key => $label) {
+            if (empty($credentials[$key])) {
+                $this->validationMessages[] = "`$label` is required";
+                $valid = false;
+            }
+        }
+        return $valid;
+    }
+
+    public static function create($fields)
+    {
+        $remoteTracker = new X12RemoteTracker();
+        return $remoteTracker->insert($fields);
+    }
+
+    public function insert($fields)
+    {
+        $setQueryPart = $this->buildInsertColumns($fields);
+        $sql = " INSERT INTO x12_remote_tracker SET ";
+        $sql .= $setQueryPart['set'];
+
+        $results = sqlInsert(
+            $sql,
+            $setQueryPart['bind']
+        );
+
+        return $results;
+    }
+
+    public function update($fields)
+    {
+        $query = $this->buildUpdateColumns($fields);
+        $sql = "UPDATE x12_remote_tracker SET ";
+        $sql .= $query['set'];
+
+        $results = sqlStatement($sql, $query['bind']);
+
+        return $results;
+    }
+
+    public function fetchByStatus($status = self::STATUS_WAITING)
+    {
+        $waiting = $this->selectHelper("SELECT * FROM x12_remote_tracker R", [
+            'join' => "JOIN x12_partners P ON P.id = R.x12_partner_id",
+            'where' => "WHERE `status` = ?",
+            'data' => [$status]
+        ]);
+
+        return $waiting;
+    }
+
+}

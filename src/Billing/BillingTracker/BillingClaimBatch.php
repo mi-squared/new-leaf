@@ -82,8 +82,22 @@ class BillingClaimBatch
         $this->bat_filename = $bat_filename;
     }
 
-    public function write_batch_file()
+    /**
+     * Write the batch file to disk, and if enabled, queue the file
+     * to be written to remote SFTP server.
+     *
+     * In the case of the "normal" generate x12 (not per-insco) we
+     * only generate one batch file, so we need to send it to all
+     * of the x-12 partners that were found during billing process.
+     * This will usually only ever have one element, but just in case
+     * There are more than one x-12 partner configured and input through
+     * billing manger, we handle the array case.
+     *
+     * @param array|null|int $x12_partner_id
+     */
+    public function write_batch_file($x12_partner_id = null)
     {
+        $error = false;
         // If a writable edi directory exists, log the batch to it.
         // I guarantee you'll be glad we did this. :-)
         if ($this->bat_filedir !== false) {
@@ -91,8 +105,43 @@ class BillingClaimBatch
             if ($fh) {
                 fwrite($fh, $this->bat_content);
                 fclose($fh);
+            } else {
+                $error = true;
             }
         }
+
+        // If we are automatically uploading claims to X12 partners, do that here right after we
+        // write the 'official' batch file
+        if (false === $error &&
+            $GLOBALS['auto_sftp_claims_to_x12_partner']) {
+            if ($x12_partner_id !== null) {
+                $now = date('Y-m-d h:i:s');
+                // If this is an array, queue the batchfile to send to all x-12 partners
+                if (is_array($x12_partner_id)) {
+                    foreach( $x12_partner_id as $id) {
+                        X12RemoteTracker::create([
+                            'x12_partner_id' => $id,
+                            'x12_filename' => $this->bat_filename,
+                            'status' => X12RemoteTracker::STATUS_WAITING,
+                            'messages' => '',
+                            'created_at' => $now,
+                            'updated_at' => $now
+                        ]);
+                    }
+                } else {
+                    X12RemoteTracker::create([
+                        'x12_partner_id' => $x12_partner_id,
+                        'x12_filename' => $this->bat_filename,
+                        'status' => X12RemoteTracker::STATUS_WAITING,
+                        'messages' => '',
+                        'created_at' => $now,
+                        'updated_at' => $now
+                    ]);
+                }
+            }
+        }
+
+        return $error;
     }
 
     public function append_claim(&$segs)

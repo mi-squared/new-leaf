@@ -22,7 +22,14 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
     /**
      * @var BillingClaimBatch
      */
-    private $batch;
+    protected $batch;
+
+    /*
+     * Since with the non-direct method, we only create one batch file,
+     * we need to track all of the X12 partners on the cliams (if ther are more than one)
+     * so we can send the batch file to all of them.
+     */
+    protected $x12_partner_ids = [];
 
     public function __construct($action, $encounter_claim = false)
     {
@@ -75,6 +82,9 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
             // Don't finalize the claim, just return after we write the claim to the batch file
             return $tmp;
         } else {
+            // Store the x12 partner IDs that are in this claims batch, because
+            // if remote SFTP is enabled, we'll have to send the batch file to all of them
+            $this->x12_partner_ids[]= $claim->getPartner();
             // After we save the claim, update it with the filename (don't create a new revision)
             if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $this->batch->getBatFilename())) {
                 $this->printToScreen(xl("Internal error: claim ") . $claim->getId() . xl(" not found!") . "\n");
@@ -87,15 +97,16 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
     public function complete($context = null)
     {
         $this->batch->append_claim_close();
-        // If we're validating only, or clearing and validiating, don't write to our EDI directory
+        // If we're validating only, or clearing and validating, don't write to our EDI directory
         // Just send to the browser in that case for the end-user to review.
-
-//        if ($this->action ===)
-        $format_bat = str_replace('~', PHP_EOL, $bat_content);
-        $wrap = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'><pre>" . text($format_bat) . "</pre></div></body></html>";
-        echo $wrap;
-        exit();
-
-        $this->batch->write_batch_file();
+        if ($this->getAction() === BillingProcessor::VALIDATE_ONLY ||
+            $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+            $format_bat = str_replace('~', PHP_EOL, $this->batch->getBatContent());
+            $wrap = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'><pre>" . text($format_bat) . "</pre></div></body></html>";
+            echo $wrap;
+            exit();
+        } else if ($this->getAction() === BillingProcessor::NORMAL) {
+            $this->batch->write_batch_file($this->x12_partner_ids);
+        }
     }
 }

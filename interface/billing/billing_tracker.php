@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Interface that provides tracking information for a claim batch
  *
@@ -34,7 +35,7 @@ use OpenEMR\OeUI\OemrUI;
             color: black;
         }
     </style>
-    <script type="">
+    <script type="text/javascript">
         $(document).ready(function() {
             const serverUrl = "billing_tracker_ajax.php?csrf_token_form=" + <?php echo js_url(CsrfUtils::collectCsrfToken()); ?>;
             const oTable = $('#billing-tracker-table').DataTable({
@@ -53,18 +54,19 @@ use OpenEMR\OeUI\OemrUI;
                     },
                     { "data": "id" },
                     { "data": "status" },
-                    { "data": "x12Partner" },
-                    { "data": "file" },
-                    { "data": "dateCreated" },
-                    { "data": "dateUpdated" }
+                    { "data": "x12_partner_name" },
+                    { "data": "x12_filename" },
+                    { "data": "created_at" },
+                    { "data": "updated_at" },
                 ],
                 "order": [[1, 'asc']]
             });
 
             /* Formatting function for row details - modify as you need */
-            function format ( d ) {
+            function format (d) {
                 // `d` is the original data object for the row
-                let claimsTable = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+                let claimsTable = 'd.messages' +
+                    '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
                     '<tr>'+
                     '<td>Jim Jones</td>'+
                     '<td>BCBS NC</td>'+

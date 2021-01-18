@@ -33,11 +33,12 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
         $result = sqlStatement("SELECT * from x12_partners");
         while ($row = sqlFetchArray($result)) {
 
+            $has_dir = true;
             // If the local directory doesn't exist, attempt to create it
             if (isset($row['x12_sftp_local_dir']) &&
                 !is_dir($row['x12_sftp_local_dir'])) {
-                $state = mkdir($row['x12_sftp_local_dir'], '644', true);
-                if (false === $state) {
+                $has_dir = mkdir($row['x12_sftp_local_dir'], '644', true);
+                if (false === $has_dir) {
                     $this->printToScreen(xl("Could not create directory for X12 partner " . $row['name']));
                 }
             }
@@ -47,7 +48,11 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             $filename = str_replace('batch', 'batch-p'.$row['id'], $filename);
             $filename = $filename . '.txt';
             $batch->setBatFilename($filename);
-            $batch->setBatFiledir($row['x12_sftp_local_dir']);
+
+            // Only set the batch file directory if we have a valid directory
+            if ($has_dir) {
+                $batch->setBatFiledir($row['x12_sftp_local_dir']);
+            }
 
             // Store the directory in an associative array with the partner ID as the index
             $this->x12_partner_batches[$row['id']] = $batch;
@@ -104,11 +109,11 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
     {
         $format_bat = "";
         $created_batches = [];
-        foreach ($this->x12_partner_batches as $x12_partner_batch) {
+        foreach ($this->x12_partner_batches as $x12_partner_id => $x12_partner_batch) {
 
             if (empty($x12_partner_batch->getBatContent())) {
                 // If we didn't write any claims for this X12 partner
-                // don't append the closing lines or do anything else
+                // don't append the closing lines or write the claim file or do anything else
                 continue;
             }
 
@@ -120,7 +125,7 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
                 $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
                 $format_bat .= str_replace('~', PHP_EOL, $x12_partner_batch->getBatContent()) . "\n";
             } else if ($this->getAction() === BillingProcessor::NORMAL) {
-                $x12_partner_batch->write_batch_file();
+                $x12_partner_batch->write_batch_file($x12_partner_id);
             }
 
             $created_batches[]= $x12_partner_batch;
@@ -133,6 +138,10 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             echo $wrap;
         } else if ($this->getAction() === BillingProcessor::NORMAL) {
             $html = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'>";
+            // If the global is enabled to SFTP claim files, tell the user
+            if ($GLOBALS['auto_sftp_claims_to_x12_partner']) {
+                $html .= "<div class='alert alert-primary' role='alert'>" . xl("Sending Claims via STFP. Check status on SFTP Billing Tracker") . "</div>";
+            }
             $html .= "<ul class='list-group'>";
             foreach ($created_batches as $created_batch) {
                 $file = $created_batch->getBatFilename();
