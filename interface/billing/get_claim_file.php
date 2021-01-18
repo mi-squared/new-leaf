@@ -20,12 +20,25 @@ if (!CsrfUtils::verifyCsrfToken($_GET["csrf_token_form"])) {
 }
 
 $content_type = "text/plain";
-$claim_file_dir = $GLOBALS['OE_SITE_DIR'] . "/documents/edi/";
 
 $fname = $_GET['key'];
-$fname = preg_replace("[/]", "", $fname);
-$fname = preg_replace("[\.\.]", "", $fname);
-$fname = preg_replace("[\\\\]", "", $fname);
+
+// First look in the database for the file
+$sql = "SELECT `B`.`x12_partner_id`, `X`.`x12_sftp_local_dir`
+    FROM `billing` `B`
+    JOIN `x12_partners` `X` ON `B`.`x12_partner_id` = `X`.`id`
+    WHERE `process_file` = ?
+    ORDER BY `process_date` DESC LIMIT 1";
+$row = sqlQuery($sql, [$fname]);
+
+if ($row) {
+    $claim_file_dir = $row['x12_sftp_local_dir'];
+} else {
+    $claim_file_dir = $GLOBALS['OE_SITE_DIR'] . "/documents/edi/";
+    $fname = preg_replace("[/]", "", $fname);
+    $fname = preg_replace("[\.\.]", "", $fname);
+    $fname = preg_replace("[\\\\]", "", $fname);
+}
 
 if (strtolower(substr($fname, (strlen($fname) - 4))) == ".pdf") {
     $content_type = "application/pdf";

@@ -6,6 +6,7 @@ namespace OpenEMR\Billing\BillingTracker;
 
 use OpenEMR\Billing\BillingUtilities;
 use OpenEMR\Billing\X125010837P;
+use OpenEMR\Common\Csrf\CsrfUtils;
 
 class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 {
@@ -134,9 +135,10 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             $html = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'>";
             $html .= "<ul class='list-group'>";
             foreach ($created_batches as $created_batch) {
-
-                $file = $created_batch->getBatFiledir() . DIRECTORY_SEPARATOR . $created_batch->getBatFilename();
-                $html .= "<li class='list-group-item d-flex justify-content-between align-items-center'><a href='$file'>$file</a></li>";
+                $file = $created_batch->getBatFilename();
+                $url = $GLOBALS['webroot'] . '/interface/billing/get_claim_file.php?key=' . $file .
+                    '&csrf_token_form=' . CsrfUtils::collectCsrfToken();
+                $html .= "<li class='list-group-item d-flex justify-content-between align-items-center'><a href='$url'>$file</a></li>";
             }
             $html .= "</ul>";
             $html .= "</div></body></html>";

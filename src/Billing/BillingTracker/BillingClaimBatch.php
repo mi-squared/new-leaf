@@ -37,7 +37,7 @@ class BillingClaimBatch
         // Seconds since 1/1/1970 00:00:00 GMT will be our interchange control number
         // but since limited to 9 char must be without leading 1
         $this->bat_icn = substr((string)$this->bat_time, 1, 9);
-        $this->bat_filename = date("Y-m-d-Hi", $this->bat_time) . "-batch.";
+        $this->bat_filename = date("Y-m-d-Hi", $this->bat_time) . "-batch";
         $this->bat_filedir = $GLOBALS['OE_SITE_DIR'] . DIRECTORY_SEPARATOR . "documents" . DIRECTORY_SEPARATOR . "edi";
     }
 
