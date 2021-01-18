@@ -139,7 +139,8 @@ $partners = $x->_utility_array($x->x12_partner_factory());
         function doSubmit(action) {
             top.restoreSession();
             return new Promise(function(resolve, reject) {
-                if (action !== 'btn-continue') {
+                if (action !== 'btn-continue' ||
+                    <?php echo $GLOBALS['gen_x12_based_on_ins_co']; ?> ) {
                     var showLog = function() {
                         $("#view-log-link").click();
                     };
@@ -696,7 +697,7 @@ $partners = $x->_utility_array($x->x12_partner_factory());
         </div>
     </div>
     <div class="container-fluid mt-1">
-        <form class="form-inline" name='update_form' method='post' action='billing_process2.php'>
+        <form class="form-inline" name='update_form' method='post' action='billing_process.php'>
             <nav class="nav navbar-expand-md navbar-light bg-light px-3 py-2">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#billing-nav-detail" aria-controls="" aria-expanded="false" aria-label="Actions">
                     <span><?php echo xlt('More Actions'); ?></span>

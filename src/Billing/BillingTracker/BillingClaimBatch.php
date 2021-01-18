@@ -41,6 +41,15 @@ class BillingClaimBatch
         $this->bat_filedir = $GLOBALS['OE_SITE_DIR'] . DIRECTORY_SEPARATOR . "documents" . DIRECTORY_SEPARATOR . "edi";
     }
 
+
+    /**
+     * @return string
+     */
+    public function getBatContent(): string
+    {
+        return $this->bat_content;
+    }
+
     /**
      * @return string
      */
@@ -77,7 +86,7 @@ class BillingClaimBatch
     {
         // If a writable edi directory exists, log the batch to it.
         // I guarantee you'll be glad we did this. :-)
-        if ($this->bat_file_dir !== false) {
+        if ($this->bat_filedir !== false) {
             $fh = fopen($this->bat_filedir . DIRECTORY_SEPARATOR . $this->bat_filename, 'a');
             if ($fh) {
                 fwrite($fh, $this->bat_content);

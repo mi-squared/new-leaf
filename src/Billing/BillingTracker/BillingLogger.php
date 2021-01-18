@@ -33,8 +33,18 @@ class BillingLogger
         $this->bill_info[]= $message;
     }
 
+    public function bill_info()
+    {
+        return $this->bill_info;
+    }
+
     public function appendToLog($message)
     {
         $this->hlog .= $message;
+    }
+
+    public function hlog()
+    {
+        return $this->hlog;
     }
 }

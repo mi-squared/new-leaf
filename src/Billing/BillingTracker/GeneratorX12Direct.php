@@ -20,8 +20,9 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
     protected $x12_partner_batches = [];
 
-    public function __construct($encounter_claim = false)
+    public function __construct($action, $encounter_claim = false)
     {
+        parent::__construct($action);
         $this->encounter_claim = $encounter_claim;
     }
 
@@ -42,12 +43,13 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
             $batch = new BillingClaimBatch();
             $filename = $batch->getBatFilename();
-            $filename = $bat_filename = str_replace('batch', 'batch-p'.$row['id'], $filename );
+            $filename = str_replace('batch', 'batch-p'.$row['id'], $filename);
+            $filename = $filename . '.txt';
             $batch->setBatFilename($filename);
             $batch->setBatFiledir($row['x12_sftp_local_dir']);
 
             // Store the directory in an associative array with the partner ID as the index
-            $this->x12_partner_dirs[$row['id']] = $batch;
+            $this->x12_partner_batches[$row['id']] = $batch;
         }
     }
 
@@ -60,6 +62,8 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
         } else if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
             $status = BillingClaim::STATUS_LEAVE_UNBILLED; // Status == 1 means leave as unbilled
         }
+
+        $this->printToScreen(xl("Processing claim " . $claim->getId()));
 
         $tmp = BillingUtilities::updateClaim(
             true,
@@ -77,6 +81,7 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
         // Get the correct batch file using the X-12 partner ID
         $batch = $this->x12_partner_batches[$claim->getPartner()];
 
+        // Use the tr3 format to output for direct-submission to insurance companies
         $log = '';
         $segs = explode("~\n", X125010837P::gen_x12_837_tr3($claim->getPid(), $claim->getEncounter(), $log, $this->encounter_claim, $claim->getIsLast()));
         $this->appendToLog($log);
@@ -88,7 +93,7 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             return $tmp;
         } else {
             // After we save the claim, update it with the filename (don't create a new revision)
-            if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $this->batch->getBatFilename())) {
+            if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $batch->getBatFilename())) {
                 $this->printToScreen(xl("Internal error: claim ") . $claim->getId() . xl(" not found!") . "\n");
             }
         }
@@ -96,8 +101,47 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
     public function complete($context = null)
     {
+        $format_bat = "";
+        $created_batches = [];
         foreach ($this->x12_partner_batches as $x12_partner_batch) {
-            $x12_partner_batch->write_batch_file();
+
+            if (empty($x12_partner_batch->getBatContent())) {
+                // If we didn't write any claims for this X12 partner
+                // don't append the closing lines or do anything else
+                continue;
+            }
+
+            $x12_partner_batch->append_claim_close();
+
+            // If this is the final, validated claim, write to the edi location
+            // for this x12 partner
+            if ($this->getAction() === BillingProcessor::VALIDATE_ONLY ||
+                $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+                $format_bat .= str_replace('~', PHP_EOL, $x12_partner_batch->getBatContent()) . "\n";
+            } else if ($this->getAction() === BillingProcessor::NORMAL) {
+                $x12_partner_batch->write_batch_file();
+            }
+
+            $created_batches[]= $x12_partner_batch;
         }
+
+        // if validating (sending to screen for user)
+        if ($this->getAction() === BillingProcessor::VALIDATE_ONLY ||
+            $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+            $wrap = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'><pre>" . text($format_bat) . "</pre></div></body></html>";
+            echo $wrap;
+        } else if ($this->getAction() === BillingProcessor::NORMAL) {
+            $html = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'>";
+            $html .= "<ul class='list-group'>";
+            foreach ($created_batches as $created_batch) {
+
+                $file = $created_batch->getBatFiledir() . DIRECTORY_SEPARATOR . $created_batch->getBatFilename();
+                $html .= "<li class='list-group-item d-flex justify-content-between align-items-center'><a href='$file'>$file</a></li>";
+            }
+            $html .= "</ul>";
+            $html .= "</div></body></html>";
+            echo $html;
+        }
+
     }
 }

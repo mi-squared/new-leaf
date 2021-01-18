@@ -9,6 +9,11 @@ trait WritesToBillingLog
 {
     protected $logger;
 
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
     public function setLogger(BillingLogger $logger)
     {
         $this->logger = $logger;

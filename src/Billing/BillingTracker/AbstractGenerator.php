@@ -7,6 +7,11 @@ abstract class AbstractGenerator extends AbstractProcessingTask
 {
     protected $action;
 
+    public function __construct($action)
+    {
+        $this->action = $action;
+    }
+
     /**
      * @return mixed
      */

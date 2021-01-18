@@ -24,8 +24,9 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
      */
     private $batch;
 
-    public function __construct($encounter_claim = false)
+    public function __construct($action, $encounter_claim = false)
     {
+        parent::__construct($action);
         $this->encounter_claim = $encounter_claim;
     }
 
@@ -85,8 +86,16 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
 
     public function complete($context = null)
     {
+        $this->batch->append_claim_close();
         // If we're validating only, or clearing and validiating, don't write to our EDI directory
         // Just send to the browser in that case for the end-user to review.
+
+//        if ($this->action ===)
+        $format_bat = str_replace('~', PHP_EOL, $bat_content);
+        $wrap = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'><pre>" . text($format_bat) . "</pre></div></body></html>";
+        echo $wrap;
+        exit();
+
         $this->batch->write_batch_file();
     }
 }
