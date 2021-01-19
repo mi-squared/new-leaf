@@ -65,7 +65,8 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
     public function execute(BillingClaim $claim)
     {
-        // Status is a filed in claims table
+        // Depending on our action, set the status, which gets populated in the
+        // claims tables by updateClaim()
         $status = 0;
         if ($this->getAction() === BillingProcessor::NORMAL) {
             $status = BillingClaim::STATUS_MARK_AS_BILLED; // Status == 2 means mark as billed and set the billed date
@@ -166,6 +167,10 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             }
             $html .= "</ul>";
             $html .= "</div></body></html>";
+
+            // The logger gets is accessible in the billing_process.php page with the results.
+            // We want all the good formatting that comes with the billing_process.php page (at the bottom)
+            // but we don't want to show the close button because the modal already has that.
             $this->logger->setShowCloseButton(false);
             echo $html;
         }

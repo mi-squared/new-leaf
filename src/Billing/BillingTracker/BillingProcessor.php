@@ -123,7 +123,7 @@ class BillingProcessor
         } else if (isset($post['bn_x12_encounter'])) {
             $processing_task = new GeneratorX12($this->extractAction(), true);
         } else if (isset($post['bn_process_hcfa'])) {
-            $processing_task = new GeneratorHCFAPDF($this->extractAction());
+            $processing_task = new GeneratorHCFA_PDF($this->extractAction());
         } else if (isset($post['bn_process_hcfa_form'])) {
             $processing_task = new ProcessHCFAForm($this->extractAction());
         } else if (isset($post['bn_process_ub04'])) {
