@@ -26,6 +26,9 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
         // Instantiate mainly for the filename creation, we're not tracking text segments
         // since we're generating a PDF
         $this->batch = new BillingClaimBatch();
+
+        $filename = $this->batch->getBatFilename() . '.pdf';
+        $this->batch->setBatFilename($filename);
     }
 
     public function execute(BillingClaim $claim)
@@ -52,7 +55,6 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
             //validate_payer_reset($payer_id_held, $patient_id, $encounter);
             return;
         } else {
-            $filename = $this->batch->getBatFilename() . '.pdf';
             if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $filename)) {
                 $this->printToScreen(xl("Internal error: claim ") . $claim->getId() . xl(" not found!") . "\n");
             }
@@ -81,7 +83,7 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
             exit();
         } else if ($this->getAction() === BillingProcessor::NORMAL) {
             // If a writable edi directory exists (and it should), write the pdf to it.
-            $fh = @fopen($GLOBALS['OE_SITE_DIR'] . "/documents/edi/{$this->batch->getBatFilename}", 'a');
+            $fh = @fopen($GLOBALS['OE_SITE_DIR'] . "/documents/edi/{$this->batch->getBatFilename()}", 'a');
             if ($fh) {
                 fwrite($fh, $this->pdf->ezOutput());
                 fclose($fh);
@@ -91,7 +93,7 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
             header("Expires: 0");
             header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
             header("Content-Type: application/force-download");
-            header("Content-Disposition: attachment; filename={$this->batch->getBatFilename}");
+            header("Content-Disposition: attachment; filename={$this->batch->getBatFilename()}");
             header("Content-Description: File Transfer");
             // header("Content-Length: " . strlen($bat_content));
             echo $this->pdf->ezOutput();
