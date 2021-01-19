@@ -12290,3 +12290,15 @@ PRIMARY KEY (`id`),
 KEY `accounts_id` (`user_id`),
 KEY `clients_id` (`client_id`)
 ) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `x12_remote_tracker`
+CREATE TABLE `x12_remote_tracker` (
+`id` bigint(20) NOT NULL,
+`x12_partner_id` int(11) NOT NULL,
+`x12_filename` varchar(255) NOT NULL,
+`status` varchar(255) NOT NULL,
+`claims` json DEFAULT NULL,
+`messages` json DEFAULT NULL,
+`created_at` datetime NOT NULL,
+`updated_at` datetime NOT NULL
+) ENGINE=InnoDB;
