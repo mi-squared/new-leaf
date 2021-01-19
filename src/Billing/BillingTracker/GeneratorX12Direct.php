@@ -14,12 +14,15 @@
 
 namespace OpenEMR\Billing\BillingTracker;
 
+use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingLog;
 use OpenEMR\Billing\BillingUtilities;
 use OpenEMR\Billing\X125010837P;
 use OpenEMR\Common\Csrf\CsrfUtils;
 
-class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
+class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface, LoggerInterface
 {
+    use WritesToBillingLog;
+
     /**
      * If "Allow Encounter Claims" is enabled, this allows the claims to use
      * the alternate payor ID on the claim and sets the claims to report,
@@ -111,6 +114,9 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
         // Get the correct batch file using the X-12 partner ID
         $batch = $this->x12_partner_batches[$claim->getPartner()];
+
+        // Tell our batch that we've processed this claim
+        $batch->addClaim($claim);
 
         // Use the tr3 format to output for direct-submission to insurance companies
         $log = '';

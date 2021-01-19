@@ -4,7 +4,25 @@
 namespace OpenEMR\Billing\BillingTracker;
 
 
-class ProcessHCFAForm extends GeneratorHCFAPDF
+use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingLog;
+
+class ProcessHCFAForm extends AbstractGenerator implements GeneratorInterface, LoggerInterface
 {
-    use GeneratesPdf;
+    use WritesToBillingLog;
+
+
+    public function setup($context)
+    {
+        // TODO: Implement setup() method.
+    }
+
+    public function execute(BillingClaim $claim)
+    {
+        // TODO: Implement execute() method.
+    }
+
+    public function complete($context = null)
+    {
+        // TODO: Implement complete() method.
+    }
 }

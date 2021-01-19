@@ -3,10 +3,16 @@
 
 namespace OpenEMR\Billing\BillingTracker;
 
+use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingLog;
+use OpenEMR\Billing\BillingUtilities;
+use OpenEMR\Billing\X125010837I;
+
 require_once __DIR__ . '/../../../interface/billing/ub04_dispose.php';
 
-class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface
+class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface, LoggerInterface
 {
+    use WritesToBillingLog;
+
     // These two are specific to UB04
     protected $template = array();
     protected $ub04id = array();
@@ -15,7 +21,7 @@ class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface
 
     public function setup($context)
     {
-        $this->batch = new BillingClaimBatch();
+        $this->batch = new BillingClaimBatch('.txt');
     }
 
     public function execute(BillingClaim $claim)
@@ -39,8 +45,15 @@ class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface
         $log = '';
         $segs = explode("~\n", X125010837I::generateX12837I($claim->getPid(), $claim->getEncounter(), $log, $this->ub04id));
         $this->appendToLog($log);
-        $this->append_claim($segs);
-        if ($this->getAction() === BillingProcessor::VALIDATE_ONLY) {
+        $this->batch->append_claim($segs);
+
+        // Store the claims that are in this claims batch, because
+        // if remote SFTP is enabled, we'll need the x12 partner ID to look up SFTP credentials
+        $this->batch->addClaim($claim);
+
+        if ($this->getAction() === BillingProcessor::VALIDATE_ONLY ||
+            $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+            // Do we need to do the payor reset thing???
             return $tmp;
         } else {
             if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $this->batch->getBatFilename(), 'X12-837I', -1, 0, json_encode($ub04id))) {
@@ -48,11 +61,27 @@ class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface
             }
         }
 
+        ub04Dispose('download', $template, $bat_filename, 'noform');
+
         return $tmp;
     }
 
     public function complete($context = null)
     {
-        $this->batch->write_batch_file();
+        $this->batch->append_claim_close();
+
+        if ($this->getAction() == BillingProcessor::VALIDATE_ONLY ||
+            ($this->getAction() == BillingProcessor::VALIDATE_AND_CLEAR)) {
+            $format_bat = str_replace('~', PHP_EOL, $this->batch->getBatContent());
+            $wrap = "<!DOCTYPE html><html><head></head><body><div style='overflow: hidden;'><pre>" . text($format_bat) . "</pre></div></body></html>";
+            echo $wrap;
+        } else if ($this->getAction() == BillingProcessor::NORMAL) {
+            $success = $this->batch->write_batch_file();
+            if ($success) {
+                $this->printToScreen(xl('X-12 Generated Successfully'));
+            } else {
+                $this->printToScreen(xl('Error Generating Batch File'));
+            }
+        }
     }
 }

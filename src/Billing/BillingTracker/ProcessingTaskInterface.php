@@ -1,10 +1,8 @@
 <?php
 
-
 namespace OpenEMR\Billing\BillingTracker;
 
-
-interface ProcessingTaskInterface extends LoggerInterface
+interface ProcessingTaskInterface
 {
     public function setup($context);
 

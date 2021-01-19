@@ -54,11 +54,11 @@ $logger = $billingProcessor->execute();
                         </li>
                     <?php } ?>
                 </ul>
-                <?php if ($logger->showCloseButton()) { ?>
-                <button class="btn btn-secondary btn-sm btn-cancel" id="close-link">
-                    <?php echo xlt('Close'); ?>
-                </button>
-                <?php } ?>
+<!--                --><?php //if ($logger->showCloseButton()) { ?>
+<!--                <button class="btn btn-secondary btn-sm btn-cancel" id="close-link">-->
+<!--                    --><?php //echo xlt('Close'); ?>
+<!--                </button>-->
+<!--                --><?php //} ?>
             </div>
         </div>
     </div>

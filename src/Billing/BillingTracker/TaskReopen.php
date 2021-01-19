@@ -4,12 +4,12 @@
 namespace OpenEMR\Billing\BillingTracker;
 
 
-use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingScreen;
+use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingLog;
 use OpenEMR\Billing\BillingUtilities;
 
-class TaskReopen extends AbstractProcessingTask implements ProcessingTaskInterface
+class TaskReopen extends AbstractProcessingTask implements ProcessingTaskInterface, LoggerInterface
 {
-    use WritesToBillingScreen;
+    use WritesToBillingLog;
 
     public function setup($context)
     {
@@ -33,6 +33,6 @@ class TaskReopen extends AbstractProcessingTask implements ProcessingTaskInterfa
 
     public function complete($context = null)
     {
-        // TODO: Implement complete() method.
+        // nothing to do
     }
 }

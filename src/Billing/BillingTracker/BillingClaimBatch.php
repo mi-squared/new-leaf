@@ -38,7 +38,14 @@ class BillingClaimBatch
     protected $bat_filename;
     protected $bat_filedir;
 
-    public function __construct()
+    /**
+     * Array of claims contained in this batch
+     *
+     * @var array
+     */
+    protected $claims = [];
+
+    public function __construct($ext = '.txt')
     {
         $this->bat_type = ''; // will be edi or hcfa
         $this->bat_sendid = '';
@@ -53,10 +60,33 @@ class BillingClaimBatch
         // Seconds since 1/1/1970 00:00:00 GMT will be our interchange control number
         // but since limited to 9 char must be without leading 1
         $this->bat_icn = substr((string)$this->bat_time, 1, 9);
-        $this->bat_filename = date("Y-m-d-His", $this->bat_time) . "-batch";
+        $this->bat_filename = date("Y-m-d-His", $this->bat_time) . "-batch" . $ext;
         $this->bat_filedir = $GLOBALS['OE_SITE_DIR'] . DIRECTORY_SEPARATOR . "documents" . DIRECTORY_SEPARATOR . "edi";
     }
 
+    /**
+     * @return array
+     */
+    public function getClaims(): array
+    {
+        return $this->claims;
+    }
+
+    /**
+     * @param array $claims
+     */
+    public function setClaims(array $claims): void
+    {
+        $this->claims = $claims;
+    }
+
+    /**
+     * @param array $claims
+     */
+    public function addClaim($claim): void
+    {
+        $this->claims []= $claim;
+    }
 
     /**
      * @return string
@@ -109,9 +139,8 @@ class BillingClaimBatch
      * There are more than one x-12 partner configured and input through
      * billing manger, we handle the array case.
      *
-     * @param array|null|int $x12_partner_id
      */
-    public function write_batch_file($x12_partner_id = null)
+    public function write_batch_file()
     {
         $success = true;
         // If a writable edi directory exists, log the batch to it.
@@ -130,29 +159,32 @@ class BillingClaimBatch
         // write the 'official' batch file
         if (true === $success &&
             $GLOBALS['auto_sftp_claims_to_x12_partner']) {
-            if ($x12_partner_id !== null) {
+            $unique_x12_partners = $this->extractUniqueX12PartnersFromClaims($this->claims);
+            if (is_array($unique_x12_partners)) {
                 // If this is an array, queue the batchfile to send to all x-12 partners
-                if (is_array($x12_partner_id)) {
-                    foreach( $x12_partner_id as $id) {
-                        X12RemoteTracker::create([
-                            'x12_partner_id' => $id,
-                            'x12_filename' => $this->bat_filename,
-                            'status' => X12RemoteTracker::STATUS_WAITING,
-                            'messages' => ''
-                        ]);
-                    }
-                } else {
+                foreach( $unique_x12_partners as $x12_partner_id) {
                     X12RemoteTracker::create([
                         'x12_partner_id' => $x12_partner_id,
                         'x12_filename' => $this->bat_filename,
                         'status' => X12RemoteTracker::STATUS_WAITING,
-                        'messages' => ''
+                        'claims' => json_encode($this->claims)
                     ]);
                 }
             }
         }
 
         return $success;
+    }
+
+    protected function extractUniqueX12PartnersFromClaims($claims)
+    {
+        $unique_x12_partners = [];
+        foreach ($claims as $claim) {
+            if (!in_array($claim->getPartner(), $unique_x12_partners)) {
+                $unique_x12_partners[]= $claim->getPartner();
+            }
+        }
+        return $unique_x12_partners;
     }
 
     public function append_claim(&$segs)

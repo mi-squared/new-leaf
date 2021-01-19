@@ -32,7 +32,7 @@ if ($isAuthorized !== true) {
         exit(xlt("Sorry! Not Authorized."));
     }
 } else {
-    $imgurl = "../../../../public/images";
+    $imgurl = $GLOBALS['webroot'] . "/public/images";
 }
 
 use OpenEMR\Core\Header;

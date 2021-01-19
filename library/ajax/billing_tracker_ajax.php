@@ -26,12 +26,14 @@ $response = new stdClass();
 $response->data = [];
 foreach ($claim_files as $claim_file) {
     $element = new stdClass();
-    $element->x12_partner_name = $claim_file['name'];
-    $element->x12_filename = $claim_file['x12_filename'];
-    $element->status = $claim_file['status'];
+    $element->x12_partner_id = text($claim_file['x12_partner_id']);
+    $element->x12_partner_name = text($claim_file['name']);
+    $element->x12_filename = text($claim_file['x12_filename']);
+    $element->status = xl($claim_file['status']);
     $element->created_at = oeFormatDateTime($claim_file['created_at']);
     $element->updated_at = oeFormatDateTime($claim_file['updated_at']);
-    $element->claims = [];
+    $element->claims = json_decode($claim_file['claims']);
+    $element->messages = json_decode($claim_file['messages']);
     $response->data []= $element;
 }
 

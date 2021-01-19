@@ -17,7 +17,7 @@
 
 namespace OpenEMR\Billing\BillingTracker;
 
-class BillingClaim
+class BillingClaim implements \JsonSerializable
 {
     const STATUS_LEAVE_UNBILLED = 1;
     const STATUS_MARK_AS_BILLED = 2;
@@ -220,5 +220,11 @@ class BillingClaim
     public function setIsLast($is_last): void
     {
         $this->is_last = $is_last;
+    }
+
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
     }
 }

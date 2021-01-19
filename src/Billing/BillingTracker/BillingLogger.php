@@ -1,15 +1,63 @@
 <?php
 
+/**
+ * These are logging functions that were extracted from the original
+ * billing_process.php function and placed here.
+ *
+ * Each Processing Task that writes to the log can 'use' the trait
+ * WritesToBillingLog which helps the task implement the LoggerInterface.
+ *
+ * That trait will keep a reference of this object, which is passed all
+ * throughout the billing process, so everything writes to the same log.
+ *
+ * At the end of the billing process, the BillingLogger instance is
+ * returned to billing_process.php to write any log messages to the screen.
+ *
+ * @package   OpenEMR
+ * @link      http://www.open-emr.org
+ * @author    Brady Miller <brady.g.miller@gmail.com>
+ * @author    Ken Chapple <ken@mi-squared.com>
+ * @author    Daniel Pflieger <daniel@growlingflea.com>
+ * @author    Terry Hill <terry@lilysystems.com>
+ * @author    Jerry Padgett <sjpadgett@gmail.com>
+ * @author    Stephen Waite <stephen.waite@cmsvt.com>
+ * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
+ * @copyright Copyright (c) 2021 Daniel Pflieger <daniel@growlingflea.com>
+ * @copyright Copyright (c) 2014-2020 Brady Miller <brady.g.miller@gmail.com>
+ * @copyright Copyright (c) 2016 Terry Hill <terry@lillysystems.com>
+ * @copyright Copyright (c) 2017-2020 Jerry Padgett <sjpadgett@gmail.com>
+ * @copyright Copyright (c) 2018-2020 Stephen Waite <stephen.waite@cmsvt.com>
+ * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
+ */
 
 namespace OpenEMR\Billing\BillingTracker;
-
 
 use OpenEMR\Common\Crypto\CryptoGen;
 
 class BillingLogger
 {
+    /**
+     * Contains an array of status messages that accumulate
+     * through the billing process
+     *
+     * @var array
+     */
     protected $bill_info = [];
+
+    /**
+     * Contains a string that represents the results from formatting
+     * x-12 claims. This is what you see when you click the 'Logs' button
+     * on the result modal.
+     *
+     * @var false|string
+     */
     protected $hlog;
+
+    /**
+     * Show/Hide the 'Close' button that is printed in billing_process.php
+     *
+     * @var bool
+     */
     protected $showCloseButton = true;
 
     public function __construct()
@@ -52,7 +100,7 @@ class BillingLogger
     /**
      * @return bool
      */
-    public function isShowCloseButton(): bool
+    public function showCloseButton(): bool
     {
         return $this->showCloseButton;
     }

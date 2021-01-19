@@ -4,23 +4,27 @@
 namespace OpenEMR\Billing\BillingTracker;
 
 
-class GeneratorExternal extends AbstractProcessingTask implements GeneratorInterface
+use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingLog;
+
+class GeneratorExternal extends AbstractGenerator implements GeneratorInterface, LoggerInterface
 {
+    use WritesToBillingLog;
+
     protected $be;
 
-    public function setup()
+    public function setup($context = null)
     {
         $this->be = new \BillingExport();
     }
 
-    public function setAction($action)
-    {
-        // TODO: Implement setAction() method.
-    }
-
-    public function processClaim(BillingClaim $claim)
+    public function execute(BillingClaim $claim)
     {
         $this->be->addClaim($claim->getPid(), $claim->getEncounter());
         return $this->clearClaim($claim);
+    }
+
+    public function complete($context = null)
+    {
+        // TODO: Implement complete() method.
     }
 }

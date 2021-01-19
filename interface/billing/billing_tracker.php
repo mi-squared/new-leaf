@@ -3,6 +3,9 @@
 /**
  * Interface that provides tracking information for a claim batch
  *
+ * The back-end ajax that goes with this datatables implementation is
+ * located in library/ajax/billing_tracker_ajax.php
+ *
  * @package   OpenEMR
  * @link      http://www.open-emr.org
  * @author    Ken Chapple <ken@mi-squared.com>
@@ -77,7 +80,8 @@ use OpenEMR\OeUI\OemrUI;
                         "render": function(data, type, row, meta){
                             if(type === 'display'){
                                 const url = '<?php echo $GLOBALS['webroot']; ?>/interface/billing/get_claim_file.php?key=' +
-                                    data + '&csrf_token_form=<?php echo CsrfUtils::collectCsrfToken(); ?>';
+                                    data + '&csrf_token_form=<?php echo CsrfUtils::collectCsrfToken(); ?>' +
+                                    '&partner=' + row.x12_partner_id;
                                 data = '<a href="' + url + '">' + data + '</a>';
                             }
 
@@ -98,29 +102,36 @@ use OpenEMR\OeUI\OemrUI;
             /* Formatting function for row details - modify as you need */
             function format (d) {
                 // `d` is the original data object for the row
-                let claimsTable = 'd.messages' +
-                    '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-                    '<tr>'+
-                    '<td>Jim Jones</td>'+
-                    '<td>BCBS NC</td>'+
-                    '<td>$150</td>'+
-                    '<td><a href="">details</a></td>'+
-                    '</tr>'+
-                    '<tr>'+
-                    '<td>Paula Smith</td>'+
-                    '<td>BCBS NC</td>'+
-                    '<td>$200</td>'+
-                    '<td><a href="">details</a></td>'+
-                    '</tr>'+
-                    '<tr>'+
-                    '<td>John Dow</td>'+
-                    '<td>BCBS NC</td>'+
-                    '<td>$50</td>'+
-                    '<td><a href="">details</a></td>'+
-                    '</tr>'+
-                    '</table>';
+                // First output any messages from the SFTP
+                let output = '';
+                if (d.messages !== null) {
+                    d.messages.forEach(message => {
+                        output += '<div class="alert alert-info">' + message + '</div>';
+                    });
+                }
 
-                return claimsTable;
+                // Now output the claims in this batch
+                output += '<table class="table" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+                output +=
+                    '<thead>' +
+                        '<tr>' +
+                            '<th><?php echo xl('Patient ID'); ?></th>' +
+                            '<th><?php echo xl('Encounter ID'); ?></th>' +
+                            '<th><?php echo xl('Payor ID'); ?></th>' +
+                        '</tr>' +
+                    '</thead>';
+                output += '<tbody>';
+                d.claims.forEach(claim => {
+                    output +=
+                        '<tr>' +
+                            '<td>' + claim.pid + '</td>' +
+                            '<td>' + claim.encounter + '</td>' +
+                            '<td>' + claim.payor_id + '</td>' +
+                        '</tr>';
+                });
+                output += '</tbody>';
+
+                return output;
             }
 
             // Add event listener for opening and closing details

@@ -80,6 +80,7 @@ function savePayerTemplate($payerid, $ubo4id)
 
 function saveTemplate($encounter, $pid, $ub04id, $action = 'form')
 {
+    global $isAuthorized;
     if ($action != 'batch_save') {
         $ub04id = json_encode($ub04id);
         $isAuthorized = true;
@@ -99,6 +100,8 @@ function saveTemplate($encounter, $pid, $ub04id, $action = 'form')
 
 function buildTemplate(string $pid = null, string $encounter = null, $htmlin, string $action = null, &$log)
 {
+    global $srcdir, $isAuthorized;
+
     if (!$action) {
         $action = 'form';
     }
@@ -108,7 +111,7 @@ function buildTemplate(string $pid = null, string $encounter = null, $htmlin, st
 
     $isAuthorized = true;
     ob_start();
-    require(dirname(__file__) . "/ub04_form.php");
+    require $srcdir . "/../interface/billing/ub04_form.php";
     $htmlin = ob_get_clean();
     $isAuthorized = false;
 

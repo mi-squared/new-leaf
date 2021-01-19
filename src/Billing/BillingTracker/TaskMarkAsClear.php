@@ -4,8 +4,11 @@
 namespace OpenEMR\Billing\BillingTracker;
 
 
-class TaskMarkAsClear extends AbstractProcessingTask implements ProcessingTaskInterface
+use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingLog;
+
+class TaskMarkAsClear extends AbstractProcessingTask implements ProcessingTaskInterface, LoggerInterface
 {
+    use WritesToBillingLog;
 
     public function setup($context)
     {
@@ -20,6 +23,6 @@ class TaskMarkAsClear extends AbstractProcessingTask implements ProcessingTaskIn
 
     public function complete($context = null)
     {
-        // TODO: Implement complete() method.
+        // nothing to do
     }
 }

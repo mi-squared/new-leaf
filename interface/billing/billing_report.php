@@ -139,32 +139,30 @@ $partners = $x->_utility_array($x->x12_partner_factory());
         function doSubmit(action) {
             top.restoreSession();
             return new Promise(function(resolve, reject) {
-                if (action !== 'btn-continue' ||
-                    <?php echo $GLOBALS['gen_x12_based_on_ins_co']; ?> ) {
-                    var showLog = function() {
-                        $("#view-log-link").click();
-                    };
-                    // Pre-open a dialog and target dialogs iframe for content from billing_process
-                    // text or PDF.
-                    dlgopen('', 'ValidateShowBatch', 875, 500, false, '', {
-                        buttons: [{
-                                text: '<?php echo xlt("Logs"); ?>',
-                                close: false,
-                                style: 'default btn-sm',
-                                click: showLog
-                            },
-                            {
-                                text: '<i class="fa fa-thumbs-up"></i>&nbsp;<?php echo xlt("Close"); ?>',
-                                close: true,
-                                style: 'default btn-sm'
-                            }
-                        ],
-                        //onClosed: 'SubmitTheScreen', // future and/or example of onClosed.
-                        sizeHeight: 'full'
-                    });
-                    // target content from submit to dialogs iframe
-                    document.update_form.target = 'ValidateShowBatch';
-                }
+                var showLog = function() {
+                    $("#view-log-link").click();
+                };
+                // Pre-open a dialog and target dialogs iframe for content from billing_process
+                // text or PDF.
+                dlgopen('', 'ValidateShowBatch', 875, 500, false, '', {
+                    buttons: [{
+                            text: '<?php echo xlt("Logs"); ?>',
+                            close: false,
+                            style: 'default btn-sm',
+                            click: showLog
+                        },
+                        {
+                            text: '<i class="fa fa-thumbs-up"></i>&nbsp;<?php echo xlt("Close"); ?>',
+                            close: true,
+                            style: 'default btn-sm'
+                        }
+                    ],
+                    //onClosed: 'SubmitTheScreen', // future and/or example of onClosed.
+                    sizeHeight: 'full'
+                });
+                // target content from submit to dialogs iframe
+                document.update_form.target = 'ValidateShowBatch';
+
                 // Now submit form and populate dialog.
                 document.update_form.submit();
                 // go fulfill the promise.

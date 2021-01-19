@@ -5,11 +5,14 @@ namespace OpenEMR\Billing\BillingTracker;
 
 
 use OpenEMR\Billing\BillingTracker\Traits\GeneratesTxt;
+use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingLog;
 use OpenEMR\Billing\BillingUtilities;
 use OpenEMR\Billing\X125010837P;
 
-class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
+class GeneratorX12 extends AbstractGenerator implements GeneratorInterface, LoggerInterface
 {
+    use WritesToBillingLog;
+
     /**
      * If "Allow Encounter Claims" is enabled, this allows the claims to use
      * the alternate payor ID on the claim and sets the claims to report,
@@ -24,13 +27,6 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
      */
     protected $batch;
 
-    /*
-     * Since with the non-direct method, we only create one batch file,
-     * we need to track all of the X12 partners on the cliams (if ther are more than one)
-     * so we can send the batch file to all of them.
-     */
-    protected $x12_partner_ids = [];
-
     public function __construct($action, $encounter_claim = false)
     {
         parent::__construct($action);
@@ -39,9 +35,7 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
 
     public function setup($context)
     {
-        $this->batch = new BillingClaimBatch();
-        $filename = $this->batch->getBatFilename() . '.txt';
-        $this->batch->setBatFilename($filename);
+        $this->batch = new BillingClaimBatch('.txt');
     }
 
     /**
@@ -77,14 +71,17 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
         $this->appendToLog($log);
         $this->batch->append_claim($segs);
 
+        // Store the claims that are in this claims batch, because
+        // if remote SFTP is enabled, we'll need the x12 partner ID to look up SFTP credentials
+        $this->batch->addClaim($claim);
+
         // If we're validating only, exit. Otherwise finish the claim
         if ($this->getAction() === BillingProcessor::VALIDATE_ONLY) {
             // Don't finalize the claim, just return after we write the claim to the batch file
+            // TODO Do we need to do payer reset thing??
             return $tmp;
         } else {
-            // Store the x12 partner IDs that are in this claims batch, because
-            // if remote SFTP is enabled, we'll have to send the batch file to all of them
-            $this->x12_partner_ids[]= $claim->getPartner();
+
             // After we save the claim, update it with the filename (don't create a new revision)
             if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $this->batch->getBatFilename())) {
                 $this->printToScreen(xl("Internal error: claim ") . $claim->getId() . xl(" not found!") . "\n");
@@ -106,7 +103,12 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface
             echo $wrap;
             exit();
         } else if ($this->getAction() === BillingProcessor::NORMAL) {
-            $this->batch->write_batch_file($this->x12_partner_ids);
+            $success = $this->batch->write_batch_file();
+            if ($success) {
+                $this->printToScreen(xl('X-12 Generated Successfully'));
+            } else {
+                $this->printToScreen(xl('Error Generating Batch File'));
+            }
         }
     }
 }

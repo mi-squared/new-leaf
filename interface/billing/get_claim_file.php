@@ -23,28 +23,40 @@ $content_type = "text/plain";
 
 $fname = $_GET['key'];
 
-// First look in the database for the file
-$sql = "SELECT `B`.`x12_partner_id`, `X`.`x12_sftp_local_dir`
-    FROM `billing` `B`
-    JOIN `x12_partners` `X` ON `B`.`x12_partner_id` = `X`.`id`
-    WHERE `process_file` = ?
-    ORDER BY `process_date` DESC LIMIT 1";
-$row = sqlQuery($sql, [$fname]);
+$try_edi_dir = false;
+// See if the file exists in the x-12 partner's SFTP directory
+// If it's not there, try the edi directory
+if (isset($_GET['partner'])) {
+    $x12_partner_id = $_GET['partner'];
+    // First look in the database for the file
+    $sql = "SELECT `X`.`id`, `X`.`x12_sftp_local_dir`
+        FROM `x12_partners` `X`
+        WHERE `X`.`id` = ?
+        LIMIT 1";
+    $row = sqlQuery($sql, [$x12_partner_id]);
+    if ($row) {
+        $claim_file_dir = $row['x12_sftp_local_dir'];
+    }
 
-if ($row) {
-    $claim_file_dir = $row['x12_sftp_local_dir'];
+    if (!file_exists($claim_file_dir . $fname)) {
+        $try_edi_dir = true;
+    }
 } else {
+    $try_edi_dir = true;
+}
+
+if ($try_edi_dir === true) {
     $claim_file_dir = $GLOBALS['OE_SITE_DIR'] . "/documents/edi/";
     $fname = preg_replace("[/]", "", $fname);
     $fname = preg_replace("[\.\.]", "", $fname);
     $fname = preg_replace("[\\\\]", "", $fname);
 }
 
+$fname = $claim_file_dir . $fname;
+
 if (strtolower(substr($fname, (strlen($fname) - 4))) == ".pdf") {
     $content_type = "application/pdf";
 }
-
-$fname = $claim_file_dir . $fname;
 
 if (!file_exists($fname)) {
     echo xlt("The claim file: ") . text($_GET['key']) . xlt(" could not be accessed.");

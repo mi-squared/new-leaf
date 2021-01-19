@@ -17,11 +17,14 @@
 
 namespace OpenEMR\Billing\BillingTracker;
 
+use OpenEMR\Billing\BillingTracker\Traits\WritesToBillingLog;
 use OpenEMR\Billing\BillingUtilities;
 use OpenEMR\Billing\Hcfa1500;
 
-class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
+class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface, LoggerInterface
 {
+    use WritesToBillingLog;
+
     /**
      * Instance of the Cezpdf object for writing
      * @Cezpdf
@@ -58,10 +61,7 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
 
         // Instantiate mainly for the filename creation, we're not tracking text segments
         // since we're generating a PDF, which is managed in this object
-        $this->batch = new BillingClaimBatch();
-
-        $filename = $this->batch->getBatFilename() . '.pdf';
-        $this->batch->setBatFilename($filename);
+        $this->batch = new BillingClaimBatch('.pdf');
     }
 
     public function execute(BillingClaim $claim)

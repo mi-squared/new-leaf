@@ -78,6 +78,8 @@ class BillingProcessor
         // each Processing Task's execute method
         $this->processClaims($processing_task, $claims);
 
+        // Return our logger instance so any non-claim-specific data
+        // can be written to the screen like notification, alerts, status, etc.
         return $processing_task->getLogger();
     }
 
@@ -87,13 +89,14 @@ class BillingProcessor
         // Build the claims we actually want to process from the post
         // The form pots all claims whether they were selected or not, and we
         // just want the claims that were selected by the user, which have 'bill'
-        // index set on their array.
+        // index set on their array
+        $billingClaim = null;
         foreach ($this->post['claims'] as $claimId => $partner_and_payor) {
             if (isset($partner_and_payor['bill'])) {
                 // The format coming in from POST is like this:
                 // [ encounter-pid => [ 'partner' => partnerId, 'payor' => 'p'.payorId ], ... ]
                 // Since the format is cryptic, we use the BillingClaim constructor to parse that into meaningful
-                // attributes.
+                // attributes
                 $billingClaim = new BillingClaim($claimId, $partner_and_payor);
                 $claims[]= $billingClaim;
             }
@@ -102,7 +105,10 @@ class BillingProcessor
         // When we reach the end of the loop $billingClaim will still be the last claim object in the array
         // Tell the last claim in the array that they are last in case it's needed for building the
         // batch output, as in the case of GeneratorX12Direct
-        $billingClaim->setIsLast(true);
+        // If we have no claims, though, don't try to set ($billingClaim will be null)
+        if ($billingClaim !== null) {
+            $billingClaim->setIsLast(true);
+        }
 
         return $claims;
     }
@@ -166,10 +172,10 @@ class BillingProcessor
             $processing_task = new GeneratorHCFA_PDF($this->extractAction());
         } else if (isset($post['bn_process_hcfa_form'])) {
             $processing_task = new ProcessHCFAForm($this->extractAction());
-        } else if (isset($post['bn_process_ub04'])) {
+        } else if (isset($post['bn_ub04_x12'])) {
             $processing_task = new GeneratorUB04X12($this->extractAction());
         } else if (isset($post['bn_process_ub04_form'])) {
-            $processing_task = new ProcessUB04Form($this->extractAction());
+            $processing_task = new GeneratorUB04Form_PDF($this->extractAction());
         } else if (isset($post['bn_external'])) {
             $processing_task = new GeneratorExternal($this->extractAction());
         }
