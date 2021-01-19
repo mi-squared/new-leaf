@@ -1,16 +1,50 @@
 <?php
 
+/**
+ * This class represents the task that compiles claims into
+ * a HCFA form batch. This prints the claim data only, with no
+ * form fields that are present on the HCFA 1500 paper form.
+ *
+ * The other HCFA generator will print the data over an image of
+ * the paper form fields.
+ *
+ * @package   OpenEMR
+ * @link      http://www.open-emr.org
+ * @author    Ken Chapple <ken@mi-squared.com>
+ * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
+ * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
+ */
 
 namespace OpenEMR\Billing\BillingTracker;
-
 
 use OpenEMR\Billing\BillingUtilities;
 use OpenEMR\Billing\Hcfa1500;
 
 class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
 {
+    /**
+     * Instance of the Cezpdf object for writing
+     * @Cezpdf
+     */
     protected $pdf;
+
+    /**
+     * Our billing claim batch for tracking the filename and other
+     * generic claim batch things
+     *
+     * @BillingClaimBatch
+     */
     protected $batch;
+
+    /**
+     * When we run the execute function on each claim, we don't want
+     * to create a new page the first time. The instantiation of the PDF
+     * object "comes with" a canvas to write to, so the first claim, we
+     * don't need to create one. On subsequent claims, we do so we initialize
+     * this to false, and then set to true after the first claim.
+     *
+     * @bool
+     */
     protected $createNewPage;
 
     public function setup($context)
@@ -19,12 +53,11 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
         $this->pdf->ezSetMargins(trim($context['top_margin']) + 0, 0, trim($context['left_margin']) + 0, 0);
         $this->pdf->selectFont('Courier');
 
-        // The instantiation of the PDF object "comes with" a canvas to write to,
-        // so the first claim, we don't need to create one. On subsequent claims, we do.
+        // This is to tell our execute method not to create a new page the first claim
         $this->createNewPage = false;
 
         // Instantiate mainly for the filename creation, we're not tracking text segments
-        // since we're generating a PDF
+        // since we're generating a PDF, which is managed in this object
         $this->batch = new BillingClaimBatch();
 
         $filename = $this->batch->getBatFilename() . '.pdf';
@@ -61,6 +94,11 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface
         }
     }
 
+    /**
+     * Generate the download output
+     *
+     * @param null $context
+     */
     public function complete($context = null)
     {
         if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR ||

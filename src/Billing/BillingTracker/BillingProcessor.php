@@ -1,8 +1,46 @@
 <?php
 
+/**
+ * This class is the billing processor.
+ *
+ * The billing processor takes the input from the UI's Billing Manager
+ * screen, and converts the user input into an executable task object. That happens
+ * in the buildProcessingTaskFromPost() method. The object that is returned is
+ * an instance of ProcessingTaskInterface which is responsible for processing
+ * all of the claims in the group of claims sent from the UI.
+ *
+ * There are many classes that implement this interface for different types of
+ * processing and formatting of the submitted claims. For example TaskReopen simply
+ * re-opens all of the claims, where GeneratorX12 creates multiple claim batch files.
+ *
+ * Each ProcessingTaskInterface implementation has three methods.
+ *  - setup($context) called before claim loop to do any setup of the processing task
+ *  - execute(BatchClaim $claim) called on each claim, where the task can add to a batch file, or whatever
+ *  - complete($context) called after the claim loop to generate any output, or clean up
+ *
+ * This file is a refacoting of the original billing_process.php file which was
+ * becoming increasingly cluttered and ridden with logic errors because of the complexity
+ * of the looping and branching. This pattern allows each processing task to own it's
+ * class and not be mixed with others.
+ *
+ * @package   OpenEMR
+ * @link      http://www.open-emr.org
+ * @author    Brady Miller <brady.g.miller@gmail.com>
+ * @author    Ken Chapple <ken@mi-squared.com>
+ * @author    Daniel Pflieger <daniel@growlingflea.com>
+ * @author    Terry Hill <terry@lilysystems.com>
+ * @author    Jerry Padgett <sjpadgett@gmail.com>
+ * @author    Stephen Waite <stephen.waite@cmsvt.com>
+ * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
+ * @copyright Copyright (c) 2021 Daniel Pflieger <daniel@growlingflea.com>
+ * @copyright Copyright (c) 2014-2020 Brady Miller <brady.g.miller@gmail.com>
+ * @copyright Copyright (c) 2016 Terry Hill <terry@lillysystems.com>
+ * @copyright Copyright (c) 2017-2020 Jerry Padgett <sjpadgett@gmail.com>
+ * @copyright Copyright (c) 2018-2020 Stephen Waite <stephen.waite@cmsvt.com>
+ * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
+ */
 
 namespace OpenEMR\Billing\BillingTracker;
-
 
 class BillingProcessor
 {
@@ -37,7 +75,7 @@ class BillingProcessor
         $claims = $this->prepareClaims();
 
         // What task are we running, as directed by the user. Process the claims using
-        // the task
+        // each Processing Task's execute method
         $this->processClaims($processing_task, $claims);
 
         return $processing_task->getLogger();
@@ -83,6 +121,8 @@ class BillingProcessor
             $processingTask->execute($claim);
         }
 
+        // Call the task's complete method so it can produce it's output
+        // and do any clean-up
         $processingTask->complete([
             'claims' => $claims,
             'post' => $this->post

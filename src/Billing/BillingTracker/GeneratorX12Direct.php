@@ -1,8 +1,18 @@
 <?php
 
+/**
+ * This class represents the task that compiles claims into
+ * x-12 batch files, one for each insurance/x-12 pair.
+ *
+ * @package   OpenEMR
+ * @link      http://www.open-emr.org
+ * @author    Ken Chapple <ken@mi-squared.com>
+ * @author    Daniel Pflieger <daniel@mi-squared.com>, <daniel@growlingflea.com>
+ * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
+ * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
+ */
 
 namespace OpenEMR\Billing\BillingTracker;
-
 
 use OpenEMR\Billing\BillingUtilities;
 use OpenEMR\Billing\X125010837P;
@@ -27,6 +37,16 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
         $this->encounter_claim = $encounter_claim;
     }
 
+    /**
+     * In the direct-billing setup method, we need to make sure that
+     * the directories are created for our x-12 partners because
+     * we save one batch file for each z-12 partner.
+     *
+     * We also set up a BillingClaimBatch for each x-12 partner in case
+     * we have any claims to write to them in this group of claims.
+     *
+     * @param $context
+     */
     public function setup($context)
     {
         // We have to prepare our batches here

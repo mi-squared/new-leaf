@@ -1,8 +1,21 @@
 <?php
 
+/**
+ * This class represents an individual claim, as submit by the
+ * user through the Billing Manager and carries the claim's
+ * state through the processing process.
+ *
+ * If a developer needs to pass additional claim data for an individual
+ * claim to processing tasks, this is a place to add it.
+ *
+ * @package   OpenEMR
+ * @link      http://www.open-emr.org
+ * @author    Ken Chapple <ken@mi-squared.com>
+ * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
+ * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
+ */
 
 namespace OpenEMR\Billing\BillingTracker;
-
 
 class BillingClaim
 {

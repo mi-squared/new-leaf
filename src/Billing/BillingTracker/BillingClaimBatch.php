@@ -1,8 +1,24 @@
 <?php
 
+/**
+ * This class represents a claim batch file that may have
+ * many claims written to it.
+ *
+ * Though many of the functions are specific to x-12 format,
+ * this class also handles the PDF
+ *
+ * It's job is to manage the state of the filename, location and
+ * writing the file to disk. In the case of X-12 it also manages
+ * the claim separators and the trailing indicators.
+ *
+ * @package   OpenEMR
+ * @link      http://www.open-emr.org
+ * @author    Ken Chapple <ken@mi-squared.com>
+ * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
+ * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
+ */
 
 namespace OpenEMR\Billing\BillingTracker;
-
 
 class BillingClaimBatch
 {
