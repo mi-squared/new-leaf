@@ -10,7 +10,7 @@ class TaskMarkAsClear extends AbstractProcessingTask implements ProcessingTaskIn
 {
     use WritesToBillingLog;
 
-    public function setup($context)
+    public function setup(array $context)
     {
         // nothing to do
     }
@@ -21,7 +21,7 @@ class TaskMarkAsClear extends AbstractProcessingTask implements ProcessingTaskIn
         return $this->clearClaim($claim);
     }
 
-    public function complete($context = null)
+    public function complete(array $context)
     {
         // nothing to do
     }

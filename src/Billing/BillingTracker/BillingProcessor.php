@@ -90,7 +90,6 @@ class BillingProcessor
         // The form pots all claims whether they were selected or not, and we
         // just want the claims that were selected by the user, which have 'bill'
         // index set on their array
-        $billingClaim = null;
         foreach ($this->post['claims'] as $claimId => $partner_and_payor) {
             if (isset($partner_and_payor['bill'])) {
                 // The format coming in from POST is like this:
@@ -102,14 +101,6 @@ class BillingProcessor
             }
         }
 
-        // When we reach the end of the loop $billingClaim will still be the last claim object in the array
-        // Tell the last claim in the array that they are last in case it's needed for building the
-        // batch output, as in the case of GeneratorX12Direct
-        // If we have no claims, though, don't try to set ($billingClaim will be null)
-        if ($billingClaim !== null) {
-            $billingClaim->setIsLast(true);
-        }
-
         return $claims;
     }
 
@@ -117,7 +108,11 @@ class BillingProcessor
     {
         // Call setup on our processing task. If the task is a file-generator,
         // this calls setup on the generator (to set up batch file, etc)
-        $processingTask->setup($this->post);
+        $processingTask->setup([
+            'claims' => $claims,
+            'post' => $this->post
+
+        ]);
 
         // Go through each claim and process it while organizing them into batches
         foreach ($claims as $claim) {

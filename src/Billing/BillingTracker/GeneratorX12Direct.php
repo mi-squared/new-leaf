@@ -50,12 +50,13 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
      *
      * @param $context
      */
-    public function setup($context)
+    public function setup(array $context)
     {
         // We have to prepare our batches here
+        // Get all of our x-12 partners and make sure we have
+        // directories to write to for them
         $result = sqlStatement("SELECT * from x12_partners");
         while ($row = sqlFetchArray($result)) {
-
             $has_dir = true;
             if (!isset($row['x12_sftp_local_dir'])) {
                 // Local Directory not set
@@ -73,7 +74,6 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             $batch = new BillingClaimBatch();
             $filename = $batch->getBatFilename();
             $filename = str_replace('batch', 'batch-p'.$row['id'], $filename);
-            $filename = $filename . '.txt';
             $batch->setBatFilename($filename);
 
             // Only set the batch file directory if we have a valid directory
@@ -83,6 +83,15 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
             // Store the directory in an associative array with the partner ID as the index
             $this->x12_partner_batches[$row['id']] = $batch;
+
+            // Look through the claims and set is_last on each one that
+            // is the last for this x-12 partner
+            foreach ($context['claims'] as $claim) {
+                if ($claim->getPartner() === $row['id']) {
+                    $lastClaim = $claim;
+                }
+            }
+            $lastClaim->setIsLast(true);
         }
     }
 
@@ -120,7 +129,8 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
         // Use the tr3 format to output for direct-submission to insurance companies
         $log = '';
-        $segs = explode("~\n", X125010837P::gen_x12_837_tr3($claim->getPid(), $claim->getEncounter(), $log, $this->encounter_claim, $claim->getIsLast()));
+        $is_last_claim = $claim->getIsLast();
+        $segs = explode("~\n", X125010837P::gen_x12_837_tr3($claim->getPid(), $claim->getEncounter(), $log, $this->encounter_claim, $is_last_claim));
         $this->appendToLog($log);
         $batch->append_claim($segs);
 
@@ -136,7 +146,7 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
         }
     }
 
-    public function complete($context = null)
+    public function complete(array $context)
     {
         $format_bat = "";
         $created_batches = [];

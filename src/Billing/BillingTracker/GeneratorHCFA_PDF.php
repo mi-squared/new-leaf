@@ -50,7 +50,7 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface,
      */
     protected $createNewPage;
 
-    public function setup($context)
+    public function setup(array $context)
     {
         $this->pdf = new \Cezpdf('LETTER');
         $this->pdf->ezSetMargins(trim($context['top_margin']) + 0, 0, trim($context['left_margin']) + 0, 0);
@@ -97,9 +97,9 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface,
     /**
      * Generate the download output
      *
-     * @param null $context
+     * @param array $context
      */
-    public function complete($context = null)
+    public function complete(array $context)
     {
         if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR ||
             $this->getAction() === BillingProcessor::VALIDATE_ONLY) {

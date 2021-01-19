@@ -11,7 +11,7 @@ class TaskReopen extends AbstractProcessingTask implements ProcessingTaskInterfa
 {
     use WritesToBillingLog;
 
-    public function setup($context)
+    public function setup(array $context)
     {
         // nothing to do
     }
@@ -31,7 +31,7 @@ class TaskReopen extends AbstractProcessingTask implements ProcessingTaskInterfa
         return $tmp;
     }
 
-    public function complete($context = null)
+    public function complete(array $context)
     {
         // nothing to do
     }

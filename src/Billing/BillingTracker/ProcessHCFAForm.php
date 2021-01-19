@@ -11,7 +11,7 @@ class ProcessHCFAForm extends AbstractGenerator implements GeneratorInterface, L
     use WritesToBillingLog;
 
 
-    public function setup($context)
+    public function setup(array $context)
     {
         // TODO: Implement setup() method.
     }
@@ -21,7 +21,7 @@ class ProcessHCFAForm extends AbstractGenerator implements GeneratorInterface, L
         // TODO: Implement execute() method.
     }
 
-    public function complete($context = null)
+    public function complete(array $context)
     {
         // TODO: Implement complete() method.
     }

@@ -19,7 +19,7 @@ class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface, 
 
     protected $batch;
 
-    public function setup($context)
+    public function setup(array $context)
     {
         $this->batch = new BillingClaimBatch('.txt');
     }
@@ -61,12 +61,12 @@ class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface, 
             }
         }
 
-        ub04Dispose('download', $template, $bat_filename, 'noform');
+        ub04Dispose('download', $this->template, $this->batch->getBatFilename(), 'noform');
 
         return $tmp;
     }
 
-    public function complete($context = null)
+    public function complete(array $context)
     {
         $this->batch->append_claim_close();
 

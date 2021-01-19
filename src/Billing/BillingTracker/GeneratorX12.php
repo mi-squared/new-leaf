@@ -33,7 +33,7 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface, Logg
         $this->encounter_claim = $encounter_claim;
     }
 
-    public function setup($context)
+    public function setup(array $context)
     {
         $this->batch = new BillingClaimBatch('.txt');
     }
@@ -91,7 +91,7 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface, Logg
         return $tmp;
     }
 
-    public function complete($context = null)
+    public function complete(array $context)
     {
         $this->batch->append_claim_close();
         // If we're validating only, or clearing and validating, don't write to our EDI directory

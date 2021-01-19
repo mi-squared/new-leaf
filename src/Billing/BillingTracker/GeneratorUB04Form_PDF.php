@@ -16,7 +16,7 @@ class GeneratorUB04Form_PDF extends AbstractGenerator implements GeneratorInterf
     protected $ub04id = array();
     protected $batch;
 
-    public function setup($context)
+    public function setup(array $context)
     {
         $this->batch = new BillingClaimBatch('.pdf');
     }
@@ -32,7 +32,7 @@ class GeneratorUB04Form_PDF extends AbstractGenerator implements GeneratorInterf
         }
     }
 
-    public function complete($context = null)
+    public function complete(array $context)
     {
         ub04Dispose('download', $this->template, $this->batch->getBatFilename(), 'form');
         exit();
