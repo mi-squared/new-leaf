@@ -26,22 +26,42 @@ class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface, 
 
     public function execute(BillingClaim $claim)
     {
-        $this->ub04id = get_ub04_array($claim->getPid(), $claim->getEncounter());
-        $ub_save = json_encode($this->ub04id);
-        $tmp = BillingUtilities::updateClaim(
-            true,
-            $claim->getPid(),
-            $claim->getEncounter(),
-            $claim->getPayorId(),
-            $claim->getPayorType(),
-            BillingClaim::STATUS_MARK_AS_BILLED,
-            BillingClaim::BILL_PROCESS_IN_PROGRESS,
-            '',
-            $claim->getTarget(),
-            $claim->getPartner() . '-837I',
-            0,
-            $ub_save);
+        // If we are doing final billing (normal) or validate and mark-as-billed,
+        // Then set up a new version
+        if ($this->getAction() === BillingProcessor::NORMAL ||
+            $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
 
+            // This is a validation pass, but mark as billed if we're 'clearing'
+            if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+                $tmp = BillingUtilities::updateClaim(
+                    true,
+                    $claim->getPid(),
+                    $claim->getEncounter(),
+                    $claim->getPayorId(),
+                    $claim->getPayorType(),
+                    BillingClaim::STATUS_MARK_AS_BILLED
+                );
+            }
+
+            $this->ub04id = get_ub04_array($claim->getPid(), $claim->getEncounter());
+            $ub_save = json_encode($this->ub04id);
+            $tmp = BillingUtilities::updateClaim(
+                true,
+                $claim->getPid(),
+                $claim->getEncounter(),
+                $claim->getPayorId(),
+                $claim->getPayorType(),
+                BillingClaim::STATUS_MARK_AS_BILLED,
+                BillingClaim::BILL_PROCESS_IN_PROGRESS,
+                '',
+                $claim->getTarget(),
+                $claim->getPartner() . '-837I',
+                0,
+                $ub_save
+            );
+        }
+
+        // Do the UB04 processing
         $log = '';
         $segs = explode("~\n", X125010837I::generateX12837I($claim->getPid(), $claim->getEncounter(), $log, $this->ub04id));
         $this->appendToLog($log);
@@ -55,13 +75,27 @@ class GeneratorUB04X12 extends AbstractGenerator implements GeneratorInterface, 
             $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
             // Do we need to do the payor reset thing???
             return $tmp;
-        } else {
-            if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $this->batch->getBatFilename(), 'X12-837I', -1, 0, json_encode($ub04id))) {
+        } else if ($this->getAction() == BillingProcessor::NORMAL) {
+            $tmp = BillingUtilities::updateClaim(
+                false,
+                $claim->getPid(),
+                $claim->getEncounter(),
+                -1,
+                -1,
+                2,
+                2,
+                $this->batch->getBatFilename(),
+                'X12-837I',
+                -1,
+                0,
+                json_encode($this->ub04id)
+            );
+
+            // If we had an error, print to screen
+            if (!$tmp) {
                 $this->printToScreen(xl("Internal error: claim ") . $claim->getId() . xl(" not found!") . "\n");
             }
         }
-
-        ub04Dispose('download', $this->template, $this->batch->getBatFilename(), 'noform');
 
         return $tmp;
     }

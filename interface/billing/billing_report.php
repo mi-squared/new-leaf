@@ -164,6 +164,7 @@ $partners = $x->_utility_array($x->x12_partner_factory());
                 document.update_form.target = 'ValidateShowBatch';
 
                 // Now submit form and populate dialog.
+                top.restoreSession(); // Not sure if this is needed but something in billing is causing 'SITE ID' error
                 document.update_form.submit();
                 // go fulfill the promise.
                 resolve(true);
@@ -727,7 +728,7 @@ $partners = $x->_utility_array($x->x12_partner_factory());
                             <?php } ?>
                             <?php if ($GLOBALS['ub04_support']) { ?>
                             <li class="nav-item">
-                                <button type="submit" class="btn nav-link btn-link btn-download" name="bn_ub04_x12" title="<?php echo xla('Generate Institutional X12 837I') ?>">
+                                <button type="submit" class="btn nav-link btn-link btn-download" name="bn_ub04_x12" onclick="confirmActions(event, '1');"title="<?php echo xla('Generate Institutional X12 837I') ?>">
                                     <?php echo xlt('Generate X12 837I') ?>
                                 </button>
                             </li>
