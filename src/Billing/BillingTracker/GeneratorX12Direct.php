@@ -97,29 +97,31 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
     public function execute(BillingClaim $claim)
     {
-        // Depending on our action, set the status, which gets populated in the
-        // claims tables by updateClaim()
-        $status = 0;
-        if ($this->getAction() === BillingProcessor::NORMAL) {
-            $status = BillingClaim::STATUS_MARK_AS_BILLED; // Status == 2 means mark as billed and set the billed date
-        } else if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
-            $status = BillingClaim::STATUS_LEAVE_UNBILLED; // Status == 1 means leave as unbilled
+        // If we are doing final billing (normal) or validate and mark-as-billed,
+        // Then set up a new version
+        if ($this->getAction() === BillingProcessor::NORMAL ||
+            $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+
+            // This is a validation pass, but mark as billed if we're 'clearing'
+            if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+                $tmp = BillingUtilities::updateClaim(true, $claim->getPid(), $claim->getEncounter(), $claim->getPayorId(), $claim->getPayorType(), BillingClaim::STATUS_MARK_AS_BILLED);
+            }
+
+            // Do we really need to create another new version? Not sure exactly how this interacts
+            // with the rest of the system
+            $tmp = BillingUtilities::updateClaim(
+                true,
+                $claim->getPid(),
+                $claim->getEncounter(),
+                $claim->getPayorId(),
+                $claim->getPayorType(),
+                BillingClaim::STATUS_MARK_AS_BILLED,
+                BillingClaim::BILL_PROCESS_IN_PROGRESS, // bill_process == 1 means??
+                '', // process_file
+                $claim->getTarget(),
+                $claim->getPartner()
+            );
         }
-
-        $this->printToScreen(xl("Processing claim " . $claim->getId()));
-
-        $tmp = BillingUtilities::updateClaim(
-            true,
-            $claim->getPid(),
-            $claim->getEncounter(),
-            $claim->getPayorId(),
-            $claim->getPayorType(),
-            $status,
-            BillingClaim::BILL_PROCESS_IN_PROGRESS, // bill_process == 1 means??
-            '', // process_file
-            $claim->getTarget(),
-            $claim->getPartner()
-        );
 
         // Get the correct batch file using the X-12 partner ID
         $batch = $this->x12_partner_batches[$claim->getPartner()];
@@ -137,6 +139,9 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
         // If we're validating only, exit. Otherwise finish the claim
         if ($this->getAction() === BillingProcessor::VALIDATE_ONLY) {
             // Don't finalize the claim, just return after we write the claim to the batch file
+            // Do we need to do validate_payor_reset thing? It doesn't seem like it, maybe has to do with
+            // secondary insurance?
+            //validate_payer_reset($payer_id_held, $patient_id, $encounter);
             return $tmp;
         } else {
             // After we save the claim, update it with the filename (don't create a new revision)

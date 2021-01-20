@@ -52,8 +52,9 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface,
 
     public function setup(array $context)
     {
+        $post = $context['post'];
         $this->pdf = new \Cezpdf('LETTER');
-        $this->pdf->ezSetMargins(trim($context['top_margin']) + 0, 0, trim($context['left_margin']) + 0, 0);
+        $this->pdf->ezSetMargins(trim($post['top_margin']) + 0, 0, trim($post['left_margin']) + 0, 0);
         $this->pdf->selectFont('Courier');
 
         // This is to tell our execute method not to create a new page the first claim
@@ -66,6 +67,32 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface,
 
     public function execute(BillingClaim $claim)
     {
+        // If we are doing final billing (normal) or validate and mark-as-billed,
+        // Then set up a new version
+        if ($this->getAction() === BillingProcessor::NORMAL ||
+            $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+
+            // This is a validation pass
+            if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+                $tmp = BillingUtilities::updateClaim(true, $claim->getPid(), $claim->getEncounter(), $claim->getPayorId(), $claim->getPayorType(), 2);
+            }
+
+            // Do we really need to create another new version? Not sure exactly how this interacts
+            // with the rest of the system
+            $tmp = BillingUtilities::updateClaim(
+                true,
+                $claim->getPid(),
+                $claim->getEncounter(),
+                $claim->getPayorId(),
+                $claim->getPayorType(),
+                BillingClaim::STATUS_MARK_AS_BILLED, // status == 2 means
+                BillingClaim::BILL_PROCESS_IN_PROGRESS, // bill_process == 1 means??
+                '', // process_file
+                'hcfa'
+            );
+        }
+
+        // Do the actual claim processing
         $log = '';
         $hcfa = new Hcfa1500();
         $lines = $hcfa->genHcfa1500($claim->getPid(), $claim->getEncounter(), $log);
@@ -84,13 +111,21 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface,
                 'leading' => 12
             ));
         }
-        if ($this->getAction() === BillingProcessor::VALIDATE_ONLY) {
+
+        // If we're just validating, do nothing, otherwise finalize the claim
+        if ($this->getAction() === BillingProcessor::VALIDATE_ONLY ||
+            ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR)) {
+            $this->printToScreen(xl("Successfully Validated claim") . ": " . $claim->getId());
             //validate_payer_reset($payer_id_held, $patient_id, $encounter);
             return;
-        } else {
-            if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $filename)) {
+        } else if ($this->getAction() === BillingProcessor::NORMAL) {
+
+            // Finalize the claim
+            if (!BillingUtilities::updateClaim(false, $claim->getPid(), $claim->getEncounter(), -1, -1, 2, 2, $this->batch->getBatFilename())) {
                 $this->printToScreen(xl("Internal error: claim ") . $claim->getId() . xl(" not found!") . "\n");
             }
+
+            $this->printToScreen(xl("Successfully processed claim") . ": " . $claim->getId());
         }
     }
 
@@ -103,40 +138,46 @@ class GeneratorHCFA_PDF extends AbstractGenerator implements GeneratorInterface,
     {
         if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR ||
             $this->getAction() === BillingProcessor::VALIDATE_ONLY) {
+
+            // If we are just validating, make a temp file
+            $tmp_claim_file = $GLOBALS['temporary_files_dir'] .
+                DIRECTORY_SEPARATOR .
+                $this->batch->getBatFilename();
+            file_put_contents($tmp_claim_file, $this->pdf->ezOutput());
+
             // If we are just validating, the output should be a PDF presented
             // to the user, but we don't save to the edi/ directory.
-            $fname = tempnam($GLOBALS['temporary_files_dir'], 'PDF');
-            file_put_contents($fname, $this->pdf->ezOutput());
-            // Send the content for view.
-            header("Pragma: public");
-            header("Expires: 0");
-            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-            header('Content-type: application/pdf');
-            header('Content-Disposition: inline; filename="' . $this->batch->getBatFilename() . '"');
-            header('Content-Transfer-Encoding: binary');
-            header('Content-Length: ' . filesize($fname));
-            ob_end_clean();
-            @readfile($fname);
-            unlink($fname);
-            exit();
+            // This just writes to a tmp file, serves to user and then removes tmp file
+            $this->logger->setLogCompleteCallback($this, 'initiateTmpDownload');
+
         } else if ($this->getAction() === BillingProcessor::NORMAL) {
+
             // If a writable edi directory exists (and it should), write the pdf to it.
             $fh = @fopen($GLOBALS['OE_SITE_DIR'] . "/documents/edi/{$this->batch->getBatFilename()}", 'a');
             if ($fh) {
                 fwrite($fh, $this->pdf->ezOutput());
                 fclose($fh);
             }
-            // Send the PDF download.
-            header("Pragma: public");
-            header("Expires: 0");
-            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-            header("Content-Type: application/force-download");
-            header("Content-Disposition: attachment; filename={$this->batch->getBatFilename()}");
-            header("Content-Description: File Transfer");
-            // header("Content-Length: " . strlen($bat_content));
-            echo $this->pdf->ezOutput();
 
-            exit();
+            // Tell the billing_process.php script to initiate a download of this file
+            // that's in the edi directory
+            $this->logger->setLogCompleteCallback($this, 'initiateDownload');
         }
+    }
+
+    public function initiateDownload()
+    {
+        // This uses our parent's method to print the JS that automatically initiates
+        // the download of this file, after the screen bill_log messages have printed
+        $this->printDownloadClaimFileJS($this->batch->getBatFilename());
+    }
+
+    public function initiateTmpDownload()
+    {
+        // This uses our parent's method to print the JS that automatically initiates
+        // the download of this file, after the screen bill_log messages have printed
+        // Tell the get_claim_file.php file to delete the file after download because it's
+        // just a temp claim file
+        $this->printDownloadClaimFileJS($this->batch->getBatFilename(), 'tmp', true);
     }
 }

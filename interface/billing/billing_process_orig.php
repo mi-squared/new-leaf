@@ -368,6 +368,7 @@ function process_form($ar)
                 sqlStatementNoLog("UPDATE billing SET payer_id = ? WHERE " .
                     "pid= ? AND encounter = ? AND activity = 1", array($payer_id, $patient_id, $encounter));
             }
+
             if (!$tmp) {
                 die(xlt("Claim ") . text($claimid) . xlt(" update failed, not in database?"));
             } else {

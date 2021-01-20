@@ -19,9 +19,11 @@ namespace OpenEMR\Billing\BillingTracker;
 
 class BillingClaim implements \JsonSerializable
 {
+    const STATUS_LEAVE_UNCHANGED = -1;
     const STATUS_LEAVE_UNBILLED = 1;
     const STATUS_MARK_AS_BILLED = 2;
 
+    const BILL_PROCESS_LEAVE_UNCHANGED = -1;
     const BILL_PROCESS_OPEN = 0;
     const BILL_PROCESS_IN_PROGRESS = 1;
     const BILL_PROCESS_BILLED = 2;

@@ -54,6 +54,11 @@ class BillingLogger
     protected $hlog;
 
     /**
+     * @var function
+     */
+    protected $onLogCompleteCallback = [];
+
+    /**
      * Show/Hide the 'Close' button that is printed in billing_process.php
      *
      * @var bool
@@ -75,6 +80,30 @@ class BillingLogger
         } else { // ($GLOBALS['billing_log_option'] == 2)
             $this->hlog = '';
         }
+    }
+
+    public function setLogCompleteCallback($obj, $func)
+    {
+        $this->onLogCompleteCallback = ['obj' => $obj, 'func' => $func];
+    }
+
+    /**
+     * Called when log is done writing
+     *
+     * @return false|mixed
+     */
+    public function onLogComplete()
+    {
+        if (isset($this->onLogCompleteCallback['obj']) &&
+            isset($this->onLogCompleteCallback['func'])) {
+
+            return call_user_func([
+                    $this->onLogCompleteCallback['obj'],
+                    $this->onLogCompleteCallback['func']]
+            );
+        }
+
+        return false;
     }
 
     public function printToScreen($message)

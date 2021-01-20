@@ -44,26 +44,31 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface, Logg
      */
     public function execute(BillingClaim $claim)
     {
-        // Status is a filed in claims table
-        $status = 0;
-        if ($this->getAction() === BillingProcessor::NORMAL) {
-            $status = BillingClaim::STATUS_MARK_AS_BILLED; // Status == 2 means mark as billed and set the billed date
-        } else if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
-            $status = BillingClaim::STATUS_LEAVE_UNBILLED; // Status == 1 means leave as unbilled
-        }
+        // If we are doing final billing (normal) or validate and mark-as-billed,
+        // Then set up a new version
+        if ($this->getAction() === BillingProcessor::NORMAL ||
+            $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
 
-        $tmp = BillingUtilities::updateClaim(
-            true,
-            $claim->getPid(),
-            $claim->getEncounter(),
-            $claim->getPayorId(),
-            $claim->getPayorType(),
-            $status,
-            BillingClaim::BILL_PROCESS_IN_PROGRESS, // bill_process == 1 means??
-            '', // process_file
-            $claim->getTarget(),
-            $claim->getPartner()
-        );
+            // This is a validation pass, but mark as billed if we're 'clearing'
+            if ($this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
+                $tmp = BillingUtilities::updateClaim(true, $claim->getPid(), $claim->getEncounter(), $claim->getPayorId(), $claim->getPayorType(), BillingClaim::STATUS_MARK_AS_BILLED);
+            }
+
+            // Do we really need to create another new version? Not sure exactly how this interacts
+            // with the rest of the system
+            $tmp = BillingUtilities::updateClaim(
+                true,
+                $claim->getPid(),
+                $claim->getEncounter(),
+                $claim->getPayorId(),
+                $claim->getPayorType(),
+                BillingClaim::STATUS_MARK_AS_BILLED,
+                BillingClaim::BILL_PROCESS_IN_PROGRESS, // bill_process == 1 means??
+                '', // process_file
+                $claim->getTarget(),
+                $claim->getPartner()
+            );
+        }
 
         // Generate the file
         $log = '';
@@ -76,9 +81,11 @@ class GeneratorX12 extends AbstractGenerator implements GeneratorInterface, Logg
         $this->batch->addClaim($claim);
 
         // If we're validating only, exit. Otherwise finish the claim
-        if ($this->getAction() === BillingProcessor::VALIDATE_ONLY) {
+        if ($this->getAction() === BillingProcessor::VALIDATE_ONLY ||
+            $this->getAction() === BillingProcessor::VALIDATE_AND_CLEAR) {
             // Don't finalize the claim, just return after we write the claim to the batch file
             // TODO Do we need to do payer reset thing??
+            //validate_payer_reset($payer_id_held, $patient_id, $encounter);
             return $tmp;
         } else {
 
