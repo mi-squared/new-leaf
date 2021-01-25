@@ -1245,7 +1245,19 @@
               "admin",
               "super"
             ]
-          }
+          },
+            {
+                "label": "Pt. Import Script",
+                "menu_id": "adm0",
+                "target": "adm",
+                "url": "/custom/new_leaf_import_script_client_roster.php",
+                "children": [],
+                "requirement": 0,
+                "acl_req": [
+                    "admin",
+                    "super"
+                ]
+            }
         ],
         "requirement": 0,
         "acl_req": [
