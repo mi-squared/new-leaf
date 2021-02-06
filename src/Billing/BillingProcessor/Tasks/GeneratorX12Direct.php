@@ -112,12 +112,15 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
 
             // Look through the claims and set is_last on each one that
             // is the last for this x-12 partner
+            $lastClaim = null;
             foreach ($context['claims'] as $claim) {
                 if ($claim->getPartner() === $row['id']) {
                     $lastClaim = $claim;
                 }
             }
-            $lastClaim->setIsLast(true);
+            if($lastClaim !== null) {
+                $lastClaim->setIsLast(true);
+            }
         }
     }
 
@@ -195,7 +198,16 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
         // Use the tr3 format to output for direct-submission to insurance companies
         $log = '';
         $is_last_claim = $claim->getIsLast();
-        $segs = explode("~\n", X125010837P::gen_x12_837_tr3($claim->getPid(), $claim->getEncounter(), $log, $this->encounter_claim, $is_last_claim));
+       if(count($batch->getClaims()) - 1 == 0){
+           $HLCount = 0;
+
+
+       } else {
+           $HLCount = count($batch->getClaims());
+
+       }
+        $segs = explode("~\n", X125010837P::gen_x12_837_tr3($claim->getPid(), $claim->getEncounter(), $log, $this->encounter_claim, $is_last_claim, $HLCount));
+
         $this->appendToLog($log);
         $batch->append_claim($segs);
 
@@ -309,5 +321,15 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
             'created_batches' => $created_batches,
             'format_bat' => $format_bat
         ]);
+    }
+
+
+
+    public function getEdiCount($claim){
+        return $claim->edi_count;
+    }
+
+    public function setEdiCount($claim){
+
     }
 }
