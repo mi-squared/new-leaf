@@ -1500,14 +1500,14 @@ class X125010837P
      * @param  $SEFLAG
      * @return string|string[]|null
      */
-    public static function gen_x12_837_tr3($pid, $encounter, &$log, $encounter_claim = false, $SEFLAG, $HLcount)
+    public static function gen_x12_837_tr3($pid, $encounter, &$log, $encounter_claim = false, $SEFLAG, $HLcount, &$edicount)
     {
         $today = time();
         $out = '';
         $claim = new Claim($pid, $encounter);
         //Here we set up the variables that will help us keep one billing provider loop per file
         global $HLBillingPayToProvider;
-       // $HLcount = isset($HLcount) ? $HLcount : 0;
+        $HLcount = $HLcount === 1 ? 0 : $HLcount;
 
 
         $log .= "Generating claims directly to ins companies with tr3 function $pid" . "-" . $encounter . " for " .
