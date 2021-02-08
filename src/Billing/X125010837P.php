@@ -1626,7 +1626,7 @@ class X125010837P
 
             // if HL count = 1
 
-            if ($HLcount == 1) { //***TR3 Add (this is where we do the HL loop
+            //***TR3 Add (this is where we do the HL loop
                 ++$edicount;
                 $out .= "HL" . // Loop 2000A Billing/Pay-To Provider HL Loop
                 "*" . $HLcount .
@@ -1787,7 +1787,7 @@ class X125010837P
                     }
                     $out .= "~\n";
                 }
-            } //***MS Add (end HL Loop)
+             //***MS Add (end HL Loop)
 
             // Loop 2010AC Pay-To Plan Name omitted.  Includes:
             // NM1*PE, N3, N4, REF*2U, REF*EI
