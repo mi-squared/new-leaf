@@ -1500,14 +1500,13 @@ class X125010837P
      * @param  $SEFLAG
      * @return string|string[]|null
      */
-    public static function gen_x12_837_tr3($pid, $encounter, &$log, $encounter_claim = false, $SEFLAG, $HLcount, &$edicount)
+    public static function gen_x12_837_tr3($pid, $encounter, &$log, $encounter_claim = false, $SEFLAG, $HLcount, &$edicount, $HLBillingPayToProvider = 1)
     {
         $today = time();
         $out = '';
         $claim = new Claim($pid, $encounter);
         //Here we set up the variables that will help us keep one billing provider loop per file
-        global $HLBillingPayToProvider;
-        $HLcount = $HLcount === 1 ? 0 : $HLcount;
+
 
 
         $log .= "Generating claims directly to ins companies with tr3 function $pid" . "-" . $encounter . " for " .
@@ -1547,7 +1546,7 @@ class X125010837P
             "~\n";
 
         //we only want one transaction set for medi-cal
-        if ($HLcount == 0) { //***TR3 brackets close at 2000B
+        if ($HLcount == 1) { //***TR3 brackets close at 2000B
             ++$edicount;
             $out .= "ST" .
                 "*" . "837" .
@@ -1623,7 +1622,7 @@ class X125010837P
                 "*" . $claim->clearingHouseETIN() .
                 "~\n";
 
-            ++$HLcount;
+
 
             // if HL count = 1
 
@@ -1635,8 +1634,6 @@ class X125010837P
                 "*" . "20" .
                 "*" . "1" . // 1 indicates there are child segments
                 "~\n";
-
-                $HLBillingPayToProvider = $HLcount; //***TR3 Modify - HL count numbers are different for TR3 since only one provider per loop
 
                 // Situational PRV segment for provider taxonomy.
                 if ($claim->facilityTaxonomy()) {
