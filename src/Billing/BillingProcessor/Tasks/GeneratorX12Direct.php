@@ -126,7 +126,8 @@ class GeneratorX12Direct extends AbstractGenerator implements GeneratorInterface
                     $lastClaim = $claim;
                 }
             }
-            if($lastClaim !== null) {
+          
+            if ($lastClaim !== null) {
                 $lastClaim->setIsLast(true);
             }
         }
