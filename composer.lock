@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "150000b1113da5247ef68589a8c50a07",
+    "content-hash": "127e390aae7437ffe1bac2ab45021e97",
     "packages": [
         {
             "name": "academe/authorizenet-objects",
@@ -4267,6 +4267,170 @@
                 "source": "https://github.com/MarkBaker/PHPMatrix/tree/3.0.0"
             },
             "time": "2021-07-01T19:01:15+00:00"
+        },
+        {
+            "name": "mi-squared/mi-framework",
+            "version": "0.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mi-squared/mi-framework.git",
+                "reference": "6795fb0b7e94303748cc070e9c98c020417ccaa6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mi-squared/mi-framework/zipball/6795fb0b7e94303748cc070e9c98c020417ccaa6",
+                "reference": "6795fb0b7e94303748cc070e9c98c020417ccaa6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Mi2\\Framework": "src/",
+                    "Mi2\\DataTable": "src/",
+                    "Mi2\\Utils": "src/"
+                },
+                "classmap": []
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Ken Chapple",
+                    "email": "ken@mi-squared.com"
+                }
+            ],
+            "description": "A simple mvc framework",
+            "homepage": "https://mi-squared.com",
+            "keywords": [
+                "openemr"
+            ],
+            "support": {
+                "issues": "https://github.com/mi-squared/mi-framework/issues",
+                "source": "https://github.com/mi-squared/mi-framework/tree/0.1.5"
+            },
+            "time": "2021-10-29T16:13:38+00:00"
+        },
+        {
+            "name": "mi-squared/new-leaf-importer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mi-squared/new-leaf-importer.git",
+                "reference": "b2a60e76f2706ca455f101fe45bb56cb9d4e4858"
+            },
+            "default-branch": true,
+            "type": "openemr-module",
+            "autoload": {
+                "psr-4": {
+                    "Mi2\\NewLeafImport\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Ken Chapple",
+                    "email": "ken.chapple@gmail.com"
+                }
+            ],
+            "description": "Implementation of mi2 importer for NLBH",
+            "time": "2021-04-26T19:27:49+00:00"
+        },
+        {
+            "name": "mi-squared/oe-import",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mi-squared/oe-import.git",
+                "reference": "d2beb69caa88794f0f9056ba06b23d2c178acef6"
+            },
+            "require": {
+                "mi-squared/mi-framework": ">=0.1.4",
+                "mi-squared/oe-module-installer-plugin": ">=2.0.0"
+            },
+            "default-branch": true,
+            "type": "openemr-module",
+            "autoload": {
+                "psr-4": {
+                    "Mi2\\Import\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Ken Chapple",
+                    "email": "ken@mi-squared.com"
+                }
+            ],
+            "description": "Template for creating custom modules.",
+            "time": "2021-08-10T16:36:05+00:00"
+        },
+        {
+            "name": "mi-squared/oe-module-installer-plugin",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mi-squared/oe-module-installer-plugin.git",
+                "reference": "f17c5c154c983fe411205ebfe1b6b7bb7964bf35"
+            },
+            "require": {
+                "composer-plugin-api": "^2.0"
+            },
+            "require-dev": {
+                "composer/composer": "^2.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "OpenEMR\\Composer\\ModuleInstallerPlugin\\Plugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "OpenEMR\\Composer\\ModuleInstallerPlugin\\": "src/"
+                }
+            },
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Stephen Nielson",
+                    "email": "stephen@nielson.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "OpenEMR Module Installer plugin for installing custom modules into the OpenEMR codebase.",
+            "keywords": [
+                "openemr",
+                "openemr-module"
+            ],
+            "time": "2021-03-15T16:34:50+00:00"
+        },
+        {
+            "name": "mi-squared/oe-patient-privacy",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mi-squared/oe-patient-privacy.git",
+                "reference": "8ccc18d6a86286aa1c4d7fd73460c453eaa2bfbb"
+            },
+            "require": {
+                "mi-squared/mi-framework": "^0.1.0",
+                "mi-squared/oe-module-installer-plugin": "^2.0.0"
+            },
+            "default-branch": true,
+            "type": "openemr-module",
+            "autoload": {
+                "psr-0": {
+                    "PatientPrivacy": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Ken Chapple",
+                    "email": "ken@mi-squared.com"
+                }
+            ],
+            "description": "Restricts what providers can see what patients through an admin interface",
+            "time": "2021-04-01T15:33:58+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -12372,8 +12536,12 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "mi-squared/oe-patient-privacy": 20,
+        "mi-squared/oe-import": 20,
+        "mi-squared/new-leaf-importer": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -12383,5 +12551,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }
