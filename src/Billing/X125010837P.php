@@ -1662,7 +1662,7 @@ class X125010837P
                     if ($billingFacilityName == '') {
                         $log .= "*** billing facility name in 1000A loop is empty\n";
                     }
-                    $out .= $billingFacilityName .
+                    $out .= "*" . $billingFacilityName .
                     "*" .
                     "*" .
                     "*" .

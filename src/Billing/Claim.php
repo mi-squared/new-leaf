@@ -599,12 +599,18 @@ class Claim
 //***MS Add - since we are a TPA we need to include this
     public function x12_submitter_name()
     {
-        $tmp = $this->x12_partner['x12_submitter_name'] ?? '';
-        while (strlen($tmp) < 15) {
-            $tmp .= " ";
-        }
+        if(!$this->x12_partner['x12_submitter_name']){
+            return false;
 
-        return $tmp;
+        } else {
+            $tmp = $this->x12_partner['x12_submitter_name'];
+
+            while (strlen($tmp) < 15) {
+                $tmp .= " ";
+            }
+
+            return $tmp;
+        }
     }
 
     public function x12gsreceiverid()
