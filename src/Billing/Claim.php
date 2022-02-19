@@ -605,9 +605,10 @@ class Claim
         } else {
             $tmp = $this->x12_partner['x12_submitter_name'];
 
-            while (strlen($tmp) < 15) {
-                $tmp .= " ";
-            }
+            //For some clearing houses this is might be needed.
+//            while (strlen($tmp) < 15) {
+//                $tmp .= " ";
+//            }
 
             return $tmp;
         }
