@@ -90,8 +90,9 @@ class X125010837P
             "*" . "41" .
             "*";
             // check for 3rd party.  We should only use this if we are sending directly to ins. co.  Otherwise, ignore.
+
             if ($claim->x12_submitter_name()) {
-                // non-person entity
+      // non-person entity
                 $out .= "2" .
                 "*" . $claim->x12_submitter_name() .
                 "*" .
@@ -113,17 +114,17 @@ class X125010837P
                 "*" . $middleName .
                 "*" . // Name Prefix not used
                 "*" . $suffixName .
-                "*" . "46" .
                 "*" . $claim->billingFacilityETIN();
-            }
+    }
         // non-person entity, use 2
         } else {
             $out .= "NM1" .
             "*" . "41" .
             "*" . "2" . "*";
             // check for 3rd party
+
             if ($claim->x12_submitter_name()) {
-                $out .= $claim->x12_submitter_name() .
+         $out .= $claim->x12_submitter_name() .
                 "*" .
                 "*" .
                 "*" .
@@ -1625,7 +1626,7 @@ class X125010837P
                 "*" . "41" .
                 "*";
                 // check for 3rd party submitter name entered in practice settings x12 partner
-                if ($claim->x12_submitter_name()) {
+                if ($claim->x12_submitter_name() ) {
                     // non-person entity
                     $out .= "2" .
                     "*" . $claim->x12_submitter_name() .

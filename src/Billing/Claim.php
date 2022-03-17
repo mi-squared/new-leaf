@@ -229,7 +229,7 @@ class Claim
         //
         $this->payers = array();
         $this->payers[0] = array();
-        $query = "SELECT * FROM insurance_data WHERE pid = ? AND 
+        $query = "SELECT * FROM insurance_data WHERE pid = ? AND
             (date <= ? OR date IS NULL) ORDER BY type ASC, date DESC";
         $dres = sqlStatement($query, array($this->pid, $encounter_date));
         $prevtype = '';
@@ -613,12 +613,13 @@ class Claim
 //***MS Add - since we are a TPA we need to include this
     public function x12_submitter_name()
     {
+
         if ($GLOBALS['gen_x12_based_on_ins_co'] != 1) {
             return false;
         }
 
         $tmp = $this->x12Clean(trim($this->x12_partner['x12_submitter_name'])) ?? false;
-        return $tmp;
+  return $tmp;
     }
 
     public function x12gsreceiverid()
