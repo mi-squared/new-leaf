@@ -16,6 +16,7 @@ use OpenEMR\Services\Qrda\Helpers\Date;
 use OpenEMR\Services\Qrda\Helpers\Frequency;
 use OpenEMR\Services\Qrda\Helpers\PatientView;
 use OpenEMR\Services\Qrda\Helpers\View;
+use Ramsey\Uuid\Rfc4122\UuidV4;
 
 class Cat1 extends \Mustache_Engine
 {
@@ -30,11 +31,11 @@ class Cat1 extends \Mustache_Engine
         __DIR__ . DIRECTORY_SEPARATOR .
         'qrda-export' . DIRECTORY_SEPARATOR .
         'catI-r5';
+
     protected $template = 'qrda1_r5.mustache';
+
     protected $patient;
-    protected $mustache;
-    public $random_id = '4444';
-    public $mrn = '545644';
+
     /**
      * @var array
      */
@@ -42,19 +43,24 @@ class Cat1 extends \Mustache_Engine
 
     public function __construct(Patient $patient, $measures = array(), $options = array())
     {
+        parent::__construct(
+            array(
+                'entity_flags' => ENT_QUOTES,
+                'loader' => new \Mustache_Loader_FilesystemLoader($this->templatePath),
+            )
+        );
+
+        $this->_qrda_guid = UuidV4::uuid4();
+
         $this->patient = $patient;
         // comes from PatientView trait
         $this->provider = $options['provider'] ?? null;
-        $this->performance_period_end = $options['performance_period_start'] ?? null;
-        $this->performance_period_end = $options['performance_period_end'] ?? null;
-        $this->_measures = $measures; // Lambda for measures is in View "helper"
+        // lambda for performance period is in Date helper trait
+        $this->_performance_period_start = $options['performance_period_start'] ?? null;
+        $this->_performance_period_end = $options['performance_period_end'] ?? null;
+        // Lambda for measures is in View "helper"
+        $this->_measures = $measures;
         $this->submission_program = $options['submission_program'] ?? null;
-        parent::__construct(
-            array(
-            'entity_flags' => ENT_QUOTES,
-            'loader' => new \Mustache_Loader_FilesystemLoader($this->templatePath),
-            )
-        );
     }
 
     public function renderCat1Xml()
@@ -242,6 +248,7 @@ class Cat1 extends \Mustache_Engine
     {
         return json_decode(json_encode($this->patient->get_data_elements('medication', 'order')), true);
     }
+
     public function patient_care_experience()
     {
         // TODO: @sjpadgett, @adunsulag, @ken.matrix need to implement this method with helper util

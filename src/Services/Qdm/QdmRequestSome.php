@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package OpenEMR
+ * @package   OpenEMR
  * @link      http://www.open-emr.org
  * @author    Ken Chapple <ken@mi-squared.com>
  * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
@@ -10,51 +10,34 @@
 
 namespace OpenEMR\Services\Qdm;
 
+use OpenEMR\Events\BoundFilter;
 use OpenEMR\Services\Qdm\Interfaces\QdmRequestInterface;
 
 class QdmRequestSome implements QdmRequestInterface
 {
-    public $pids = [];
-
-    public $pidString = "";
+    protected $filter = null;
 
     /**
      * QdmQuery constructor.
+     *
      * @param array $pids
      */
     public function __construct(array $pids)
     {
-        $this->pids = $pids;
-
-        if (is_array($pids)) {
-            $this->pidString = implode(",", $pids);
-        }
-    }
-
-    public function getPidString()
-    {
-        return $this->pidString;
+        $filterClause = str_repeat("?,", count($pids));
+        $filterClause = rtrim($filterClause, ",");
+        $this->filter = new BoundFilter();
+        $this->filter->setFilterClause("pid IN ($filterClause)");
+        $this->filter->setBoundValues($pids);
     }
 
     /**
-     * @return array
+     * @return BoundFilter|null
+     *
+     * Use the PIDs to create a BoundFilter
      */
-    public function getPids(): array
-    {
-        return $this->pids;
-    }
-
-    /**
-     * @param array $pids
-     */
-    public function setPids(array $pids): void
-    {
-        $this->pids = $pids;
-    }
-
-
     public function getFilter()
     {
-        // TODO: Implement getFilter() method.
+        return $this->filter;
     }
 }

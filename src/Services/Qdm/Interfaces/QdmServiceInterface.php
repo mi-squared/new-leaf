@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package OpenEMR
+ * @package   OpenEMR
  * @link      http://www.open-emr.org
  * @author    Ken Chapple <ken@mi-squared.com>
  * @copyright Copyright (c) 2021 Ken Chapple <ken@mi-squared.com>
@@ -9,6 +9,8 @@
  */
 
 namespace OpenEMR\Services\Qdm\Interfaces;
+
+use OpenEMR\Services\Qdm\QdmRecord;
 
 interface QdmServiceInterface
 {
@@ -22,7 +24,7 @@ interface QdmServiceInterface
 
     public function getSqlStatement();
 
-    public function makeQdmModel(array $record);
+    public function makeQdmModel(QdmRecord $recordObj);
 
     public function executeQuery();
 }

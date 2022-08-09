@@ -8,6 +8,7 @@
 
 namespace OpenEMR\Core;
 
+use OpenEMR\Common\Logging\SystemLogger;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Exception\ParseException;
 
@@ -169,6 +170,8 @@ class Header
      */
     private static function parseConfigFile($map, $selectedAssets = array())
     {
+        $foundAssets = [];
+        $excludedCount = 0;
         foreach ($map as $k => $opts) {
             $autoload = (isset($opts['autoload'])) ? $opts['autoload'] : false;
             $allowNoLoad = (isset($opts['allowNoLoad'])) ? $opts['allowNoLoad'] : false;
@@ -179,9 +182,11 @@ class Header
             if ((self::$isHeader === true && $autoload === true) || in_array($k, $selectedAssets) || ($loadInFile && $loadInFile === self::getCurrentFile())) {
                 if ($allowNoLoad === true) {
                     if (in_array("no_" . $k, $selectedAssets)) {
+                        $excludedCount++;
                         continue;
                     }
                 }
+                $foundAssets[] = $k;
 
                 $tmp = self::buildAsset($opts, $alreadyBuilt);
 
@@ -215,6 +220,11 @@ class Header
                 }
             }
         }
+
+        if (($thisCnt = count(array_diff($selectedAssets, $foundAssets))) > 0) {
+            if ($thisCnt !== $excludedCount) {
+                (new SystemLogger())->error("Not all selected assets were included in header", ['selectedAssets' => $selectedAssets, 'foundAssets' => $foundAssets]);
+            }}
     }
 
     /**

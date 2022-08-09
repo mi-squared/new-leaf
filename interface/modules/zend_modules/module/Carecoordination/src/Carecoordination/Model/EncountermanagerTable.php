@@ -15,7 +15,9 @@ namespace Carecoordination\Model;
 
 // TODO: we need to refactor all of this so it can go into a class for this functionality
 require_once($GLOBALS['fileroot'] . '/ccr/transmitCCD.php');
+require_once($GLOBALS['fileroot'] . '/library/amc.php');
 
+use Application\Plugin\CommonPlugin;
 use CouchDB;
 use DOMDocument;
 use Dompdf\Dompdf;
@@ -32,7 +34,7 @@ class EncountermanagerTable extends AbstractTableGateway
     public function getEncounters($data, $getCount = null)
     {
         $query_data = array();
-        $query = "SELECT pd.fname, pd.lname, pd.mname, date(fe.date) as date, fe.pid, fe.encounter,
+        $query = "SELECT pd.fname, pd.lname, pd.mname, date(fe.date) as date, fe.pid, fe.encounter, pd.date AS 'patient_creation_date',
                         u.fname as doc_fname, u.mname as doc_mname, u.lname as doc_lname, (select count(encounter) from form_encounter where pid=fe.pid) as enc_count,
                         (SELECT DATE(date) FROM form_encounter WHERE pid=fe.pid ORDER BY date DESC LIMIT 1) as last_visit_date,
 						(select count(*) from ccda where pid=fe.pid and transfer=1) as ccda_transfer_count,
@@ -53,11 +55,25 @@ class EncountermanagerTable extends AbstractTableGateway
         if ($data['status'] == "unsigned") {
             $query .= " AND (cf.encounter IS  NULL OR cf.encounter ='')";
         }
-
         if ($data['from_date'] && $data['to_date']) {
-            $query .= " AND fe.date BETWEEN ? AND ? ";
+            if ($data['search_type_date'] == 'date_patient_creation') {
+                $query .= " AND pd.date BETWEEN ? AND ? ";
+            } else {
+                // default is encounter date
+                $query .= " AND fe.date BETWEEN ? AND ? ";
+            }
             $query_data[] = $data['from_date'];
             $query_data[] = $data['to_date'];
+        }
+        if (!empty($data['provider_id'])) {
+            $query .= " AND (`fe`.`provider_id` = ? OR `fe`.`supervisor_id` = ?) ";
+            $query_data[] = $data['provider_id'];
+            $query_data[] = $data['provider_id'];
+        }
+
+        if (!empty($data['billing_facility_id'])) {
+            $query .= " AND `fe`.`billing_facility` = ? ";
+            $query_data[] = $data['billing_facility_id'];
         }
 
         if ($data['pid']) {
@@ -86,8 +102,9 @@ class EncountermanagerTable extends AbstractTableGateway
             return $resCount;
         }
 
-        $query .= " LIMIT " . \Application\Plugin\CommonPlugin::escapeLimit($data['limit_start']) . "," . \Application\Plugin\CommonPlugin::escapeLimit($data['results']);
+        $query .= " LIMIT " . CommonPlugin::escapeLimit($data['limit_start']) . "," . CommonPlugin::escapeLimit($data['results']);
         $resDetails = $appTable->zQuery($query, $query_data);
+
         return $resDetails;
     }
 
@@ -225,7 +242,7 @@ class EncountermanagerTable extends AbstractTableGateway
         $appTable = new ApplicationTable();
         $ccda_combination = $data['ccda_combination'];
         $recipients = $data['recipients'];
-        $xml_type = $data['xml_type'];
+        $xml_type = strtolower($data['xml_type'] ?? '');
         $rec_arr = explode(";", $recipients);
         $d_Address = '';
         // no point in continuing if we are not setup here
@@ -234,33 +251,40 @@ class EncountermanagerTable extends AbstractTableGateway
             return ("$config_err " . ErrorConstants::ERROR_CODE_MESSAGING_DISABLED);
         }
 
+        if ($GLOBALS['phimail_verifyrecipientreceived_enable'] == '1') {
+            $verifyMessageReceivedChecked = true;
+        } else {
+            $verifyMessageReceivedChecked = false;
+        }
+
         try {
             foreach ($rec_arr as $recipient) {
                 $elec_sent = array();
                 $arr = explode('|', $ccda_combination);
                 foreach ($arr as $value) {
-                    $query = "SELECT id FROM  ccda WHERE pid = ? ORDER BY id DESC LIMIT 1";
+                    $query = "SELECT id,transaction_id FROM  ccda WHERE pid = ? ORDER BY id DESC LIMIT 1";
                     $result = $appTable->zQuery($query, array($value));
+                    // wierd foreach loop considering the limit 1 up above?
                     foreach ($result as $val) {
                         $ccda_id = $val['id'];
+                        // gets connected at the time the ccda is created
+                        $trans_id = $val['transaction_id'];
                     }
 
-                    // this segment of code is attempting to connect a CCDA to a Referral form (stored in the transactions)
-                    // table so we can track for Automated Measure Calculation (AMC) purposes.  This assumes that a referral
-                    // form has been created before the CCDA was sent (otherwise the transaction id is 0)
-                    $refs = $appTable->zQuery("select t.id as trans_id from ccda c inner join transactions t on (t.pid = c.pid and t.date = c.updated_date) where c.pid = ? and c.emr_transfer = 1 and t.title = 'LBTref'", array($value));
-                    if ($refs->count() == 0) {
-                        $trans = $appTable->zQuery("select id from transactions where pid = ? and title = 'LBTref' order by id desc limit 1", array($value));
-                        $trans_cur = $trans->current();
-                        $trans_id = $trans_cur['id'] ? $trans_cur['id'] : 0;
-                    } else {
-                        foreach ($refs as $r) {
-                            $trans_id = $r['trans_id'];
-                        }
-                    }
                     $elec_sent[] = array('pid' => $value, 'map_id' => $trans_id);
 
-                    $ccda = $this->getFile($ccda_id);
+                    $documents = \Document::getDocumentsForForeignReferenceId('ccda', $ccda_id);
+                    if (empty($documents[0])) {
+                        throw new \RuntimeException("Cannot send document as document was not generated for ccda with ccda id " . $ccda_id);
+                    }
+                    $document = $documents[0];
+                    $ccda = $document->get_data();
+                    // use the filename that exists in the document for what is sent
+                    $fileName = $document->get_name();
+                    if (empty($ccda) || empty($fileName)) {
+                        throw new \RuntimeException("Cannot send document as document data was empty or filename was empty for document with id "
+                            . $document->get_id());
+                    }
 
                     if ($xml_type == 'html') {
                         $ccda_file = $this->getCcdaAsHTML($ccda);
@@ -270,9 +294,15 @@ class EncountermanagerTable extends AbstractTableGateway
                         $xml = simplexml_load_string($ccda);
                         $ccda_file = $xml->saveXML();
                     }
+                    $replaceExt = "." . $xml_type;
+                    $extpos = strrpos($fileName, ".xml");
+                    if ($extpos !== false) {
+                        $fileName = substr_replace($fileName, $replaceExt, $extpos, strlen($replaceExt));
+                    }
+
                     // there is no way currently to specify this came from the patient so we force to clinician.
                     // Default xml type is CCD  (ie Continuity of Care Document)
-                    $result = transmitCCD($value, $ccda_file, $recipient, 'clinician', "CCD", strtolower($xml_type));
+                    $result = transmitCCD($value, $ccda_file, $recipient, 'clinician', "CCD", $xml_type, '', $fileName, $verifyMessageReceivedChecked);
                     if ($result !== "SUCCESS") {
                         $d_Address .= ' ' . $recipient . "(" . $result . ")";
                     }
@@ -285,8 +315,15 @@ class EncountermanagerTable extends AbstractTableGateway
 
         if ($d_Address == '') {
             foreach ($elec_sent as $elec) {
-                $appTable->zQuery("INSERT into amc_misc_data(amc_id,pid,map_category,map_id,date_created,date_completed) values('send_sum_amc',?,'transactions',?,NOW(),NOW())", array($elec['pid'], $elec['map_id']));
-                $appTable->zQuery("INSERT into amc_misc_data(amc_id,pid,map_category,map_id,date_created,date_completed) values('send_sum_elec_amc',?,'transactions',?,NOW(),NOW())", array($elec['pid'], $elec['map_id']));
+                // check to make sure its a valid ccda
+                $collect = amcCollect('send_sum_valid_ccda', $elec['pid'], 'transactions', $elec['map_id']);
+                // if the ccda is invalid we are not going to mark this as complete at all.
+                if (!empty($collect)) {
+                    amcAdd('send_sum_amc', true, $elec['pid'], 'transactions', $elec['map_id']);
+                    amcAdd('send_sum_elec_amc', true, $elec['pid'], 'transactions', $elec['map_id']);
+                    // when we use EMR Direct it ensures deliverability to the recipient so we automatically mark the ccda summary of care as confirmed
+                    amcAdd('send_sum_elec_amc_confirmed', true, $elec['pid'], 'transactions', $elec['map_id']);
+                }
             }
 
             return ("Successfully Sent");
