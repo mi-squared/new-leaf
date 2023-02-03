@@ -276,7 +276,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `assessment_recommended_treatment_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_recommended_treatment_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     PRIMARY KEY (id)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 INSERT IGNORE INTO list_options SET list_id='lists',
     option_id='onetofive',
