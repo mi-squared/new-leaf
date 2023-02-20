@@ -156,32 +156,49 @@ if (!isset($xyzzy))
 <td class='fieldlabel' colspan='1'>Frequency</td>
 <td class='fieldlabel' colspan='1'>Date Started</td>
 <td class='fieldlabel' colspan='1'>Side effects (if any)</td></tr>
-<!-- called consumeRows 015--> <!-- just calling --><!-- called consumeRows 125--> <!-- just calling --><!-- called consumeRows 235--> <!-- just calling --><!-- called consumeRows 345--> <!-- just calling --><!-- called consumeRows 455--> <!--  generating 5 cells and calling --><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_1'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_1'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_1'], ''); ?></td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_1'], ''); ?>
-</td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_1'], ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
-<!-- called consumeRows 015--> <!-- just calling --><!-- called consumeRows 125--> <!-- just calling --><!-- called consumeRows 235--> <!-- just calling --><!-- called consumeRows 345--> <!-- just calling --><!-- called consumeRows 455--> <!--  generating 5 cells and calling --><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_2'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_2'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_2'], ''); ?></td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_2'], ''); ?>
-</td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_2'], ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
-<!-- called consumeRows 015--> <!-- just calling --><!-- called consumeRows 125--> <!-- just calling --><!-- called consumeRows 235--> <!-- just calling --><!-- called consumeRows 345--> <!-- just calling --><!-- called consumeRows 455--> <!--  generating 5 cells and calling --><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_3'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_3'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_3'], ''); ?></td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_3'], ''); ?>
-</td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_3'], ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
-<!-- called consumeRows 015--> <!-- just calling --><!-- called consumeRows 125--> <!-- just calling --><!-- called consumeRows 235--> <!-- just calling --><!-- called consumeRows 345--> <!-- just calling --><!-- called consumeRows 455--> <!--  generating 5 cells and calling --><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_4'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_4'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_4'], ''); ?></td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_4'], ''); ?>
-</td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_4'], ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
-<!-- called consumeRows 015--> <!-- just calling --><!-- called consumeRows 125--> <!-- just calling --><!-- called consumeRows 235--> <!-- just calling --><!-- called consumeRows 345--> <!-- just calling --><!-- called consumeRows 455--> <!--  generating 5 cells and calling --><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_5'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_5'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_5'], ''); ?></td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_5'], ''); ?>
-</td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_5'], ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
-<!-- called consumeRows 015--> <!-- just calling --><!-- called consumeRows 125--> <!-- just calling --><!-- called consumeRows 235--> <!-- just calling --><!-- called consumeRows 345--> <!-- just calling --><!-- called consumeRows 455--> <!--  generating 5 cells and calling --><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_6'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_6'], ''); ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_6'], ''); ?></td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_6'], ''); ?>
-</td>
-<td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_6'], ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
-<!-- called consumeRows 015--> <!--  generating 5 cells and calling --><td class='fieldlabel' colspan='2'><?php echo xl_layout_label('Medication information was obtained from','e').':'; ?></td><td class='text data' colspan='3'><?php echo generate_form_field($manual_layouts['medication_info_from'], array_key_exists('medication_info_from', $xyzzy) ? $xyzzy['medication_info_from'] : ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
-<!-- called consumeRows 015--> <!-- generating not($fields[$checked+1]) and calling last --><td class='fieldlabel' colspan='1'><?php echo xl_layout_label('Medication effectiveness','e').':'; ?></td><td class='text data' colspan='4'><?php echo generate_form_field($manual_layouts['medication_effectiveness'], array_key_exists('medication_effectiveness', $xyzzy) ? $xyzzy['medication_effectiveness'] : ''); ?></td><!-- called consumeRows 515--> <!-- Exiting not($fields) and generating 0 empty fields --></tr>
+<!-- called consumeRows 015--> <!-- just calling --><!-- called consumeRows 125--> <!-- just calling --><!-- called consumeRows 235--> <!-- just calling --><!-- called consumeRows 345--> <!-- just calling --><!-- called consumeRows 455--> <!--  generating 5 cells and calling -->
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_1'], array_key_exists('medication_name_1', $xyzzy) ? $xyzzy['medication_name_1'] : ''); ?></td>
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_1'], array_key_exists('medication_dosage_1', $xyzzy) ? $xyzzy['medication_dosage_1'] : ''); ?></td>
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_1'], array_key_exists('medication_freq_1', $xyzzy) ? $xyzzy['medication_freq_1'] : '');?></td>
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_1'], array_key_exists('medication_date_started_1', $xyzzy) ? $xyzzy['medication_date_started_1'] : '');?></td>
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_1'], array_key_exists('medication_side_effects_1', $xyzzy) ? $xyzzy['medication_side_effects_1'] : '');?></td><!--  generating empties -->
+                <td class='emptycell' colspan='1'></td></tr>
+
+                <tr><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_2'], array_key_exists('medication_name_2', $xyzzy) ? $xyzzy['medication_name_2'] : ''); ?></td>
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_2'], array_key_exists('medication_dosage_2', $xyzzy) ? $xyzzy['medication_dosage_2'] : ''); ?></td>
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_2'], array_key_exists('medication_freq_2', $xyzzy) ? $xyzzy['medication_freq_2'] : '');?></td>
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_2'], array_key_exists('medication_date_started_2', $xyzzy) ? $xyzzy['medication_date_started_2'] : '');?></td>
+                <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_2'], array_key_exists('medication_side_effects_2', $xyzzy) ? $xyzzy['medication_side_effects_2'] : '');?></td><!--  generating empties -->
+                <td class='emptycell' colspan='1'></td></tr>
+
+                <tr><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_3'], array_key_exists('medication_name_3', $xyzzy) ? $xyzzy['medication_name_3'] : ''); ?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_3'], array_key_exists('medication_dosage_3', $xyzzy) ? $xyzzy['medication_dosage_3'] : ''); ?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_3'], array_key_exists('medication_freq_3', $xyzzy) ? $xyzzy['medication_freq_3'] : '');?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_3'], array_key_exists('medication_date_started_3', $xyzzy) ? $xyzzy['medication_date_started_3'] : '');?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_3'], array_key_exists('medication_side_effects_3', $xyzzy) ? $xyzzy['medication_side_effects_3'] : '');?></td><!--  generating empties -->
+                    <td class='emptycell' colspan='1'></td></tr>
+
+                <tr><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_4'], array_key_exists('medication_name_4', $xyzzy) ? $xyzzy['medication_name_4'] : ''); ?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_4'], array_key_exists('medication_dosage_4', $xyzzy) ? $xyzzy['medication_dosage_4'] : ''); ?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_4'], array_key_exists('medication_freq_4', $xyzzy) ? $xyzzy['medication_freq_4'] : '');?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_4'], array_key_exists('medication_date_started_4', $xyzzy) ? $xyzzy['medication_date_started_4'] : '');?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_4'], array_key_exists('medication_side_effects_4', $xyzzy) ? $xyzzy['medication_side_effects_4'] : '');?></td><!--  generating empties -->
+                    <td class='emptycell' colspan='1'></td></tr>
+
+                <tr><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_5'], array_key_exists('medication_name_5', $xyzzy) ? $xyzzy['medication_name_5'] : ''); ?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_5'], array_key_exists('medication_dosage_5', $xyzzy) ? $xyzzy['medication_dosage_5'] : ''); ?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_5'], array_key_exists('medication_freq_5', $xyzzy) ? $xyzzy['medication_freq_5'] : '');?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_5'], array_key_exists('medication_date_started_5', $xyzzy) ? $xyzzy['medication_date_started_5'] : '');?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_5'], array_key_exists('medication_side_effects_5', $xyzzy) ? $xyzzy['medication_side_effects_5'] : '');?></td><!--  generating empties -->
+                    <td class='emptycell' colspan='1'></td></tr>
+
+                <tr><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_name_6'], array_key_exists('medication_name_6', $xyzzy) ? $xyzzy['medication_name_6'] : ''); ?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_dosage_6'], array_key_exists('medication_dosage_6', $xyzzy) ? $xyzzy['medication_dosage_6'] : ''); ?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_freq_6'], array_key_exists('medication_freq_6', $xyzzy) ? $xyzzy['medication_freq_6'] : '');?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_date_started_6'], array_key_exists('medication_date_started_6', $xyzzy) ? $xyzzy['medication_date_started_6'] : '');?></td>
+                    <td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['medication_side_effects_6'], array_key_exists('medication_side_effects_6', $xyzzy) ? $xyzzy['medication_side_effects_6'] : '');?></td><!--  generating empties -->
+                    <td class='emptycell' colspan='1'></td></tr>
+
 </table></div>
 </td></tr> <!-- end section current_medications -->
 <tr><td colspan='5'>&nbsp;</td></tr>
@@ -349,7 +366,7 @@ if (!isset($xyzzy))
 <!-- called consumeRows 015--> <!--  generating 5 cells and calling --><td class='fieldlabel' colspan='1'><?php echo xl_layout_label('Clients assess attitude towards treatment','e').':'; ?></td><td class='text data' colspan='1'><?php echo generate_form_field($manual_layouts['assessment_client_attitude'], array_key_exists('assessment_client_attitude', $xyzzy) ? $xyzzy['assessment_client_attitude'] : ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
 <!-- called consumeRows 015--> <!--  generating 5 cells and calling --><td class='fieldlabel' colspan='1'><?php echo xl_layout_label('Recommended treatment modalities','e').':'; ?></td><td class='text data' colspan='4'><?php echo generate_form_field($manual_layouts['assessment_recommended_treatment_modalities'], array_key_exists('assessment_recommended_treatment_modalities', $xyzzy) ? $xyzzy['assessment_recommended_treatment_modalities'] : ''); ?></td><!--  generating empties --><td class='emptycell' colspan='1'></td></tr>
 <!-- called consumeRows 015--> <!-- generating not($fields[$checked+1]) and calling last --><td class='fieldlabel' colspan='1'><?php echo xl_layout_label('Treatment Recommendations','e').':'; ?></td><td class='text data' colspan='4'><?php echo generate_form_field($manual_layouts['assessment_recommended_treatment_comments'], array_key_exists('assessment_recommended_treatment_comments', $xyzzy) ? $xyzzy['assessment_recommended_treatment_comments'] : ''); ?></td><!-- called consumeRows 515--> <!-- Exiting not($fields) and generating 0 empty fields --></tr>
-                
+
 </table></div>
 </td></tr> <!-- end section interpretive_summary -->
 </table>

@@ -18,42 +18,60 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `symptoms_self_injurious_behavior_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_sexual_trauma_perpetrator_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_sexual_trauma_perpetrator_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_hallucinations_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_hallucinations_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_delusions_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_delusions_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_paranoia_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  `symptoms_paranoia_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_depression_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_depression_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_worthlessness_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_worthlessness_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_manic_thought_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_manic_thought_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_moodswings_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_moodswings_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_irritability_anger_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_irritability_anger_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_anxiety_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_anxiety_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_phobias_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_phobias_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_obsessions_compulsions_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_obsessions_compulsions_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_change_in_appetite_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_change_in_appetite_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_change_in_energy_level_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_change_in_energy_level_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_sleep_disturbance_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_sleep_disturbance_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_decreased_concentration_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_decreased_concentration_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_disorganized_disoriented_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_disorganized_disoriented_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_learning_problem_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_learning_problem_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_medical_complication_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_medical_complication_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
+
   `symptoms_social_withdrawal_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_social_withdrawal_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_binges_purges_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -64,28 +82,35 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `symptoms_distractibility_impulsivity_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_hyperactivity_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_hyperactivity_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_lying_maniuplative_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_lying_maniuplative_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_oppositional_behavior_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_oppositional_behavior_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_running_away_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_running_away_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_truancy_absenteeism_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_truancy_absenteeism_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_property_destruction_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_property_destruction_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_fire_setting_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_fire_setting_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_cruelty_to_animals_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_cruelty_to_animals_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_stealing_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_stealing_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_gambling_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_gambling_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_internet_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_internet_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_gaming_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_gaming_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `symptoms_behavioral_other_issues_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_behavioral_other_issues_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_other1_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -96,17 +121,23 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `symptoms_other3_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_other4_rating` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `symptoms_other4_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `substance_use` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `substance_use_general_comments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `substance_use_client_acknowledgment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `substance_use_supportive_environment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `substance_use_prior_treatment` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
+
   `legal_probation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `legal_parole` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `legal_court_dates` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `legal_previous_arrests` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `legal_officer` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `legal_comments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
+
+
   `mh_inpatient_hospitalizations_location` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mh_inpatient_hospitalizations_dates` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mh_inpatient_hospitalizations_last_year` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -115,6 +146,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `mh_er_crisis_involvement_dates` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mh_er_crisis_involvement_last_year` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mh_er_crisis_involvement_total_num` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `mh_outpatient_therapy_location` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mh_outpatient_therapy_dates` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mh_outpatient_therapy_last_year` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -123,11 +155,16 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `mh_currently_seeing` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `med_hist_comments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `med_hist_routine_medical_care` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
+
+
   `med_hist_allergies` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `med_hist_allergies_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `med_hist_date` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `med_hist_pregnant` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `med_hist_pregnant_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `medication_name_1` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `medication_dosage_1` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `medication_freq_1` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -160,19 +197,26 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `medication_side_effects_6` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `medication_info_from` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `medication_effectiveness` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
+
   `mental_status_physical_stature` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_hygiene` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_apparent_age` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_dress_appearance` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_posture_appearance` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_consciousness_activity` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `mental_status_motor_activity` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_eye_contact` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
+
+
   `mental_status_attitude` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_speech_tone` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_speech_rate` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_speech_production` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_speech_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `mental_status_mood` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_mood_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_affect` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -184,6 +228,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `mental_status_abnormal_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_orientation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_intelligence` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `mental_status_attention_concentration` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_memory_impaired` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_abstraction` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -223,6 +268,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `family_social_history_trauma` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `family_social_history_mh_sa_comments` blob,
   `family_social_history_cultural_ethnic` blob,
+
   `dev_history_applicable` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `dev_history_fetal_development` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `dev_history_delivery_complications` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -234,6 +280,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `dev_history_first_sentence` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `dev_history_walked` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `dev_history_bowel_training` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `dev_history_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_in_school` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_highest_grade` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -241,6 +288,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `education_grade_level` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_academic_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_learning_disabilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `education_employment_hobbies` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_employment_hours_per_week` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_employment_type` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -259,6 +307,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `assessment_diagnosis_4_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_diagnosis_5` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_diagnosis_5_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `assessment_family_housing` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_family_housing_z_code` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_educational_work` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -272,6 +321,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `assessment_gaf` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_disability_assessment_schedule` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_factors_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `assessment_recommended_treatment_modalities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_recommended_treatment_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_recommended_treatment_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
