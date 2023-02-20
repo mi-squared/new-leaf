@@ -71,15 +71,10 @@
         "twig/twig": "3.4.1",
         "vlucas/phpdotenv": "5.4.1",
         "waryway/php-traits-library": "1.0.4",
-<<<<<<< HEAD
-        "yubico/u2flib-server": "1.0.2"
-=======
         "yubico/u2flib-server": "1.0.2",
-        "openemr/mustache": "2.15.2",
         "mi-squared/oe-patient-privacy": "dev-master",
         "mi-squared/oe-import": "dev-master",
         "mi-squared/new-leaf-importer": "dev-master"
->>>>>>> New Leaf custom composer changes
     },
     "config": {
         "platform": {
