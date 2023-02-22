@@ -109,7 +109,7 @@ function chkdata_Txt(&$record, $var) {
 <div id="print_form_container">
 <fieldset>
 
-<?php require('layout.php') ?>
+<?php //require('layout.php') ?>
 
 </fieldset>
 </div><!-- end print_form_container -->

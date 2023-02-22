@@ -1,5 +1,7 @@
 <?php
 
+use OpenEMR\Common\ORDataObject\ORDataObject;
+
 include_once("../../interface/globals.php"); //include because of jquery functions
 require_once("$srcdir/sql.inc");
 require_once("$srcdir/patient.inc");
@@ -16,26 +18,7 @@ class PrintoutHelper extends ORDataObject
     }
 
     //Returns
-    public static function getEyeData($pid)
-    {
-        return sqlQuery("SELECT fpr.* FROM patient_data pd
-                        JOIN forms f USING (pid) JOIN form_snellen fpr ON f.form_id = fpr.id
-                        WHERE pd.pid = ? AND f.deleted = 0
-                        ORDER BY fpr.date DESC limit 1", array($pid));
-    }
 
-    //We can put in "Allergy"
-    public static function getIssues($pid, $issue)
-    {
-        $count =sqlQuery("select count(*) as count from lists where type = ? ", array($issue))['count'];
-        if ($count > 0) {
-
-            return sqlQuery("Select title from lists where pid = ? and type = ? ", array($pid, $issue));
-        } else{
-            return array('error' => 'Issue does not exist.  ');
-
-        }
-    }
 
 
     public static function getLastFormLBF($pid, $formdir)
@@ -63,62 +46,9 @@ class PrintoutHelper extends ORDataObject
 
     //break up notes into number of lines for printing to a form
     //return note array, if note is too big return note but give error.
-    public static function handleNotes($text, $numLines) {
-
-
-    }
-
-    public static function formatEyeData($array): array
-    {
-        if (!$array){
-            $response['date'] = "No record Exists";
-
-            return $response;
-        }
-
-        $vision = "Uncorrected Vision: Left: 20/{$array['left_1']} Right: 20/{$array['left_1']}";
-        if ( str_contains($array['notes'], "Referred to optometry")){
-            $response['data'] = " Did not pass screening." . $vision;
-        }else {
-            $response['data'] = " Passed Screening. " . $vision;
-        }
-        $response['date'] = substr($array['date'], 0, 10);
-        return $response;
-    }
-
-    public static function formatMedicalIssues($array): string
-    {
-        $string = '';
-        foreach($array as $datum){
-            $string .= "  " . $datum != NULL ? $datum : ' ';
-
-        }
-
-        return $string;
-
-    }
 
 
 
-    public static function formatHearing($array) : array {
-
-        if (!$array['date']) {
-            $response['data'] = "";
-            $response['date'] = 'No data exists';
-            return $response;
-        }
-
-        if ($array['Left_Ear'] === "Passed" && $array['Right_Ear'] === "Passed"){
-            $response['data'] =  "Passed Hearing Screening";
-
-        } elseif (str_contains($array['Left_Ear'], 'unco')){
-            $response['data'] = $array['Left_Ear'] . " " . $array['Right_Ear'];
-
-        }
-
-        $response['date'] = substr($array['date'], 0, 10);
-        return $response;
-    }
 
     public static function getReportData($pid, $report) {
 
@@ -128,73 +58,39 @@ class PrintoutHelper extends ORDataObject
     where deleted = 0 and fpr.pid = ? " .
             "order by fpr.date desc limit 1", array($pid) );
 
+    }
 
+    public static function getRating($num) {
+            switch($num) {
+                case 1:
+                    return "1(NONE) ";
 
+                case 2:
+                    return "2(History now Stable";
+
+                case 3:
+                    return "3(Mild / Infrequent)";
+                case 4:
+                    return "4(Moderate Frequent)";
+                case 5:
+                    return "5(Severe/Acute)";
+            }
 
     }
 
-    public static function formatTBRisk($array) :  array
-    {
-        if($array['date'] === null) {
-            $response['data'] = "No data exists";
-            $response['date'] = "";
-            return $response;
-        }
-        //$response['date'] = $array['date'];
-        if (strtolower($array['TB_Risk']) == 'no') {
-            $response['data'] = 0;
-        } else {
-            $response['data'] = 1;
-        }
-        $response['date'] = substr($array['date'], 0, 10);
-        return $response;
+    public static function formatNoteField($string, $length = 2): string {
 
+        return "<div>$string</div>";
     }
 
-    public static function formatSpeech($array) : array {
-        $response['data'] =  array();
-
-        if($array['AudiologyRefer'] == "Yes"){
-            $response['data'][] = "Referred to Audiology.";
+    public static function newLine($num = 2){
+        $string = '';
+        for($i=0; $i<=$num; $i++){
+            $string .= '<br>';
         }
 
-        if($array['SpeechTx'] == "Yes") {
-            $response['data'][] = "Referred to Speech Therapy.";
-        }
-
-        //Go to the fee sheet to get diag codes.
-
-        $response['date'] = substr($array['date'], 0, 10);
-        $query = "Select code_type, code, encounter, code_text from billing where date like '{$response['date']}%'
-                and activity = 1";
-
-        $res = sqlStatement($query);
-        while($row = sqlFetchArray($res)) {
-            $response['data'][] = $row['code_type'] . " " . $row['code'] . " " . $row['code_text'];
-        }
-
-        return $response;
+        return $string;
     }
-
-    public static function getEmergencyContact($pid) {
-
-        $sql = "Select mothersname, relation1name, relation1home, relation1cell, fathersname, " .
-            "relation2name, relation2cell, relation2home, guardiansname, relation3name," .
-            " relation3cell, relation3home from patient_data where pid = ?";
-        $res = sqlQuery($sql, array($pid));
-
-        return $res;
-
-
-    }
-
-    public static function formatNoteField($string, $length = 90): array {
-        $str = wordwrap($string, $length, '<br>');
-        $str = explode("<br>", $str);
-        return $str;
-    }
-
-
 
 
 
@@ -206,8 +102,8 @@ class PrintoutHelper extends ORDataObject
             $status = '';
         }
 
-        $string = '<div class="'.$class.'"><label for="tbRisk"><span>'.$title.'</span>
-                <input type="checkbox" id="tbRisk" name = "tbRisk" value="1" onclick="return false;" '.$status.'>
+        $string = '<div class="'.$class.'"><label for="chbox"><span>'.$title.'</span>
+                <input type="checkbox" id="chbox"  value="1" onclick="return false;" '.$status.'>
             </label></div>';
 
         //if the checkbox is checked we can print it.  if not we send an empty string
@@ -226,6 +122,26 @@ class PrintoutHelper extends ORDataObject
             return $string;
         } else {
             return '';
+        }
+
+    }
+
+    public static function generate_title($class, $value): string {
+        $string = '<div class="'.$class.' ">'.htmlspecialchars($value).'</div>';
+        if ($value !== '') {
+            return $string;
+        } else {
+            return '';
+        }
+
+    }
+
+    public static function generate_value($class, $value): string {
+        $string = '<div class="'.$class.' ">'.htmlspecialchars($value).'</div>';
+        if ($value !== '') {
+            return $string;
+        } else {
+            return '<div></div>';
         }
 
     }
@@ -255,16 +171,20 @@ class PrintoutHelper extends ORDataObject
 
     }
 
-    public static function getLastWellCheckAppointment($pid) {
+    public static function displayDrugUse($drugs) {
+        $string = '';
+        $explode = explode('|', $drugs);
+        foreach($explode as $drug){
+            $item = explode(':', $drug);
+            if ($item[1] !== '') {
+                $string .= self::generate_checkbox(1, '', $item[0]) .'<div>'. $item[1] . '</div>';
 
-        $sql = "select date(date) as date, encounter, opc.pc_catid, opc.pc_catname"
-            ." from form_encounter fe "
-            ."join openemr_postcalendar_categories opc on opc.pc_catid = fe.pc_catid "
-            ." where pid = ? and pc_catname like ? order by date desc limit 1";
-
-        return sqlQuery($sql, array($pid, "%Well%"));
+            }
 
 
+        }
+
+        return $string;
     }
 
 
@@ -275,101 +195,4 @@ class PrintoutHelper extends ORDataObject
 
 }
 
-//This is kind of OK - but not the best OOP practices.
-$data = array();
-$data['id'] = $_POST['id'];
-if ($_POST['func'] === 'getIssues' && $_POST['pid']) {
 
-    $res = sqlStatement("Select type, diagnosis, title, short_desc, type,  REPLACE(diagnosis, 'ICD10:', '') as diag from lists
-        left join icd10_dx_order_code on REPLACE(diagnosis, 'ICD10:', '') = formatted_dx_code
-        where pid = ? and type = ? and (activity = 1 or enddate is null)", array($_POST['pid'], "medical_problem"));
-    while($row = sqlFetchArray($res)) {
-        array_push($data, $row);
-    }
-    $data['type'] = "problems";
-    $data['title'] = "Health Problems to be Aware of.";
-
-    echo json_encode($data);
-}
-
-if ($_POST['func'] === 'getAllergies' ) {
-
-
-    $res = sqlStatement("Select title, type from lists where pid = ? and type = ? ", array($_POST['pid'], "allergy"));
-    while($row = sqlFetchArray($res)) {
-        array_push($data, $row);
-    }
-    $data['type'] = "allergies";
-    $data['title'] ="Known Allergies";
-    echo json_encode($data);
-
-}
-
-if ($_POST['func'] === 'getDental' ) {
-
-
-    $res = sqlStatement("Select diagnosis, title, type from lists where pid = ? and type = ? and activity = 1", array($_POST['pid'], "dental"));
-    while($row = sqlFetchArray($res)) {
-        $data[] = $row;
-    }
-    $data['title'] = "Dental Issues";
-    $data['type'] = "Dental Issues";
-    echo json_encode($data);
-
-}
-
-
-
-if ($_POST['func'] === 'getSpeech'  ) {
-    $data = array();
-    //get the last encounter and formID of the last Speech Delay form
-    $query = sqlQuery("select encounter, form_id, date from forms where formdir = ? and pid = ? and deleted = 0 order by id desc ", array("LBF_SpeechDelay", $_POST['pid']));
-    $data['encounter'] = $query['encounter'];
-    $data['date'] = substr($query['date'], 0, 10);
-
-    //Get the values from the LBF Form
-
-    $query2 = sqlStatement("Select title, field_value, lbf_data.field_id from lbf_data
-    join layout_options on lbf_data.field_id = layout_options.field_id where lbf_data.form_id = ? ", array($query['form_id']));
-    while ($row = sqlFetchArray($query2)){
-        $data[] = $row;
-    }
-
-    $query3 = sqlStatement("Select CONCAT(code_type, ' ', code, ' ', code_text) as title, code as field_id from billing where encounter = ? and code_type like '%ICD%' ", array($data['encounter']) );
-    while ($row = sqlFetchArray($query3)) {
-        $data[] = $row;
-    }
-    $data['title'] = "Speech Issues";
-    $data['type'] = 'speechIssues';
-    echo json_encode($data);
-
-}
-
-if ($_POST['func'] === 'getMeds'  ) {
-    $query = sqlStatement("select drug, date_added from prescriptions where patient_id = {$_POST['pid']}");
-    while ($row = sqlFetchArray($query)) {
-        $data[] = $row;
-    }
-
-    $data['type'] = 'meds';
-    $data['title'] ='Medications';
-    echo json_encode($data);
-}
-
-if ($_POST['func'] === 'getContacts'  ) {
-    $data[] = PrintoutHelper::getEmergencyContact($_POST['pid']);
-    $data['type'] = 'contacts';
-    $data['title'] = 'Emergency Contact List';
-    echo json_encode($data);
-
-}
-
-if ($_POST['func'] === 'getHearing'  ) {
-
-
-   $data = PrintoutHelper::getLastFormLBF($_POST['pid'], "LBFHearingSCN");
-    $data['type'] = 'hearing';
-    $data['title'] = "Hearing Results";
-    echo json_encode($data);
-
-}
