@@ -164,6 +164,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
 
   `med_hist_pregnant` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `med_hist_pregnant_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `medication_name_1` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `medication_dosage_1` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `medication_freq_1` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -204,13 +205,18 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `mental_status_dress_appearance` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_posture_appearance` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_consciousness_activity` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `mental_status_motor_activity` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_eye_contact` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
+
+
   `mental_status_attitude` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_speech_tone` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_speech_rate` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_speech_production` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_speech_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `mental_status_mood` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_mood_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_affect` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -222,6 +228,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `mental_status_abnormal_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_orientation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_intelligence` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `mental_status_attention_concentration` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_memory_impaired` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `mental_status_abstraction` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -261,6 +268,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `family_social_history_trauma` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `family_social_history_mh_sa_comments` blob,
   `family_social_history_cultural_ethnic` blob,
+
   `dev_history_applicable` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `dev_history_fetal_development` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `dev_history_delivery_complications` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -272,6 +280,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `dev_history_first_sentence` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `dev_history_walked` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `dev_history_bowel_training` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `dev_history_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_in_school` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_highest_grade` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -279,6 +288,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `education_grade_level` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_academic_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_learning_disabilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `education_employment_hobbies` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_employment_hours_per_week` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `education_employment_type` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -297,6 +307,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `assessment_diagnosis_4_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_diagnosis_5` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_diagnosis_5_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `assessment_family_housing` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_family_housing_z_code` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_educational_work` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -310,6 +321,7 @@ CREATE TABLE IF NOT EXISTS `form_intake` (
   `assessment_gaf` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_disability_assessment_schedule` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_factors_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+
   `assessment_recommended_treatment_modalities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_recommended_treatment_other` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `assessment_recommended_treatment_comments` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
