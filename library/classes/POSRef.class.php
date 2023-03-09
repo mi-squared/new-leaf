@@ -33,7 +33,7 @@ class POSRef
     function init_pos()
     {
         $pos = array();
-        $pos[] = array ("code" => "10","title" => xl("Unassigned"), "description" => "N/A");
+        $pos[] = array ("code" => "10","title" => xl("Telehealth"), "description" => "N/A");
         $pos[] = array ("code" => "01","title" => xl("Pharmacy") . " **", "description" => "A facility or location where drugs and other medically related items and services are sold, dispensed, or otherwise provided directly to patients.");
         $pos[] = array ("code" => "02","title" => xl("Telehealth"), "description" => "A facility location where health services and health related services are provided or received, through a telecommunication system ");
         $pos[] = array ("code" => "03","title" => xl("School"), "description" => "A facility whose primary purpose is education.");
