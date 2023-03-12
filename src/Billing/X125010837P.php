@@ -114,6 +114,7 @@ class X125010837P
                 "*" . $middleName .
                 "*" . // Name Prefix not used
                 "*" . $suffixName .
+                "*" . "46" .
                 "*" . $claim->billingFacilityETIN();
     }
         // non-person entity, use 2
