@@ -632,10 +632,12 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                     <fieldset>
                         <legend><?php echo xlt('Reason for Visit') ?></legend>
                         <div class="form-row mx-3 h-100">
-                            <textarea name="reason" id="reason" class="form-control" cols="80" rows="4"><?php echo $viewmode ? text($result['reason']) : text($GLOBALS['default_chief_complaint']); ?></textarea>
+                            <textarea name="reason" id="reason" class="form-control" cols="160" rows="8"><?php echo $viewmode ? text($result['reason']) : text($GLOBALS['default_chief_complaint']); ?></textarea>
                         </div>
                     </fieldset>
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="col-sm <?php displayOption('enc_enable_issues');?>">
                     <?php
                     // Before we even check for auth, see if we will even display
@@ -675,11 +677,11 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                                                 if ($perow['count']) {
                                                     echo " selected";
                                                 }
-                                            } else {
+                                            } elseif (!empty($_REQUEST['issue']) && $_REQUEST['issue'] == $list_id || $list_id){
                                                 // For new encounters the invoker may pass an issue ID.
-                                                if (!empty($_REQUEST['issue']) && $_REQUEST['issue'] == $list_id) {
+
                                                     echo " selected";
-                                                }
+
                                             }
                                             echo ">" . text($tcode) . ": " . text($irow['begdate']) . " " .
                                                 text(substr($irow['title'], 0, 40)) . "</option>\n";
