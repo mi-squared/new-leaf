@@ -182,14 +182,11 @@ function TimeToHHMMSS($TimeValue)
         return '';
     }
 
-    $is_pm = (stripos($TimeValue, 'PM') !== false);
+
     $dt = new DateTime('1970-01-01' . $TimeValue);
 
-    if ($is_pm) {
-        $TimeValue = $dt->modify('+12 hours')->format('H:i:s');
-    } else{
-        $TimeValue = $dt->modify('+0 hours')->format('H:i:s');
-    }
+    $TimeValue = $dt->modify('+0 hours')->format('H:i:s');
+
 
     return $TimeValue;
 }
