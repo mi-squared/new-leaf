@@ -467,6 +467,12 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                                 <input type='text' class='form-control datepicker' name='form_date' id='form_date' <?php echo ($disabled ?? '') ?> value='<?php echo $viewmode ? attr(oeFormatDateTime($result['date'])) : attr(oeFormatDateTime(date('Y-m-d H:i:00'))); ?>' title='<?php echo xla('Date of service'); ?>' />
                             </div>
                         </div>
+                        <div class="col-sm">
+                            <div class="form-group">
+                                <label for='endTime' class="text-right"><?php echo xlt('End Time'); ?>:</label>
+                                <input type='text' class='form-control datepicker' name='endTime' id='endTime' <?php echo ($disabled ?? '') ?> value='<?php echo $viewmode ? attr(oeFormatDateTime($result['endTime'])) : attr(oeFormatDateTime(date('Y-m-d H:i:00'))); ?>' title='<?php echo xla('End Time'); ?>' />
+                            </div>
+                        </div>
                         <div class="col-sm <?php echo ($GLOBALS['gbl_visit_onset_date'] == 1) ?: 'd-none'; ?>">
                             <div class="form-group">
                                 <label for='form_onset_date' class="text-right"><?php echo xlt('Onset/hosp. date:'); ?> &nbsp;<i id='onset-tooltip' class="fa fa-info-circle text-primary" aria-hidden="true"></i></label>
@@ -502,18 +508,8 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                         </div>
                     </div>
                     <div class="form-row align-items-center">
-                        <div class="col-sm">
-                            <div class="form-group">
-                                <label for='startTime' class="text-right"><?php echo xlt('Start Time'); ?>:</label>
-                                <input type='text' class='form-control datepicker' name='startTime' id='startTime' <?php echo ($disabled ?? '') ?> value='<?php echo $viewmode ? attr(oeFormatDateTime($result['startTime'])) : attr(oeFormatDateTime(date('Y-m-d H:i:00'))); ?>' title='<?php echo xla('Start Time'); ?>' />
-                            </div>
-                        </div>
-                        <div class="col-sm">
-                            <div class="form-group">
-                                <label for='endTime' class="text-right"><?php echo xlt('End Time'); ?>:</label>
-                                <input type='text' class='form-control datepicker' name='endTime' id='endTime' <?php echo ($disabled ?? '') ?> value='<?php echo $viewmode ? attr(oeFormatDateTime($result['endTime'])) : attr(oeFormatDateTime(date('Y-m-d H:i:00'))); ?>' title='<?php echo xla('End Time'); ?>' />
-                            </div>
-                        </div>
+
+
                     </div>
 
 

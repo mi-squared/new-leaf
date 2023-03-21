@@ -25,7 +25,7 @@ function newpatient_report($pid, $encounter, $cols, $id)
         $provider = $userService->getUser($result["provider_id"]);
         $referringProvider = $userService->getUser($result["referring_provider_id"]);
         $calendar_category = (new AppointmentService())->getOneCalendarCategory($result['pc_catid']);
-        $startTime = new DateTime($result['startTime']);
+        $startTime = new DateTime($result['date']);
         $endTime = new DateTime($result['endTime']);
         $diff = $endTime->diff($startTime)->format('%H:%I:%S');
 
@@ -37,8 +37,8 @@ function newpatient_report($pid, $encounter, $cols, $id)
             print "<span class=bold>" . xlt('Referring Provider') . ": </span><span class=text>" . text(($referringProvider['lname'] ?? '') . ", " . ($referringProvider['fname'] ?? '')) . "</span><br />\n";
             print "<span class=bold>" . xlt('POS Code') . ": </span><span class=text>" . text(sprintf('%02d', trim($result['pos_code'] ?? ''))) . "</span><br />\n";
 
-            print "<span class=bold>" . xlt('Start Time') . ": </span><span class=text>" . text( trim($result['startTime'] ?? '')). "</span><br />\n";
-            print "<span class=bold>" . xlt(' End Time') . ": </span><span class=text>" . text( trim($result['endTime'] ?? '')). "</span><br />\n";
+            print "<span class=bold>" . xlt('Start Time') . ": </span><span class=text>" . text( trim(date('h:i A', strtotime($result['date'])) ?? '')). "</span><br />\n";
+            print "<span class=bold>" . xlt(' End Time') . ": </span><span class=text>" . text( trim(date('h:i A', strtotime($result['endTime'])) ?? '')). "</span><br />\n";
             print "<span class=bold>" . xlt(' Total Time') . ": </span><span class=text>" . text( trim($diff ?? '')). "</span><br />\n";
         }
     }
