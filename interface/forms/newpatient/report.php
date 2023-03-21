@@ -25,9 +25,10 @@ function newpatient_report($pid, $encounter, $cols, $id)
         $provider = $userService->getUser($result["provider_id"]);
         $referringProvider = $userService->getUser($result["referring_provider_id"]);
         $calendar_category = (new AppointmentService())->getOneCalendarCategory($result['pc_catid']);
-        $startTime = $result['startTime'];
-        $endTime = $result['endTime'];
-        $diff = date('H:i:s', strtotime($result['endTime']) - strtotime($result['startTime']));
+        $startTime = new DateTime($result['startTime']);
+        $endTime = new DateTime($result['endTime']);
+        $diff = $endTime->diff($startTime)->format('%H:%I:%S');
+
         print "<span class=bold>" . xlt('Facility') . ": </span><span class=text>" . text($result["facility_name"]) . "</span><br />\n";
         if (empty($result['sensitivity']) || AclMain::aclCheckCore('sensitivities', $result['sensitivity'])) {
             print "<span class=bold>" . xlt('Category') . ": </span><span class=text>" . text($calendar_category[0]['pc_catname']) . "</span><br />\n";
