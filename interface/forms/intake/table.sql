@@ -1,6 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS `form_intake` (
 `date` datetime DEFAULT NULL COMMENT 'last modified date',
+    `date_created` datetime DEFAULT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `pid` bigint NOT NULL DEFAULT '0',
   `user` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,

@@ -973,6 +973,7 @@ if (
         echo "<a class='btn btn-secondary btn-sm collapse-button-form' title='" . xla('Expand/Collapse this form') . "' data-toggle='collapse' data-target='#divid_" . attr($divnos) . "'>" . xlt('Expand / Collapse') . "</a>";
         echo "</div>\n"; // Added as bug fix.
 
+
         echo "</td>\n";
         echo "</tr>";
         echo "<tr>";

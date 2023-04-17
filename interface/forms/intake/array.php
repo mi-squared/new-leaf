@@ -2,6 +2,12 @@
 
 /* in order to use the layout engine's draw functions, we need a fake table of layout data. */
 $manual_layouts = array(
+    'date_created' =>
+        array( 'field_id' => 'date_created',
+            'data_type' => '4',
+            'fld_length' => '10',
+            'description' => '',
+            'list_id' => '' ),
  'presenting_issue' =>
    array( 'field_id' => 'presenting_issue',
           'data_type' => '3',
@@ -1681,7 +1687,7 @@ $manual_layouts = array(
           'data_type' => '2',
           'fld_length' => '50',
           'max_length' => '127',
-		  'edit_options' => '["0"]',
+
           'description' => 'Click here to add diagnosis',
           'list_id' => '' ),
  'assessment_diagnosis_2' =>
@@ -1696,7 +1702,7 @@ $manual_layouts = array(
           'data_type' => '2',
           'fld_length' => '50',
           'max_length' => '127',
-	  	  'edit_options' => '["0"]',
+
           'description' => '',
           'list_id' => '' ),
  'assessment_diagnosis_3' =>
@@ -1704,7 +1710,7 @@ $manual_layouts = array(
           'data_type' => '2',
           'fld_length' => '15',
           'max_length' => '50',
-	   	  'edit_options' => '["0"]',
+
           'description' => '',
           'list_id' => '' ),
  'assessment_diagnosis_3_comments' =>
@@ -1720,7 +1726,7 @@ $manual_layouts = array(
           'data_type' => '2',
           'fld_length' => '15',
           'max_length' => '50',
-	      'edit_options' => '["0"]',
+
           'description' => '',
           'list_id' => '' ),
  'assessment_diagnosis_4_comments' =>
@@ -1728,7 +1734,7 @@ $manual_layouts = array(
           'data_type' => '2',
           'fld_length' => '50',
           'max_length' => '127',
-	      'edit_options' => '["0"]',
+
           'description' => '',
           'list_id' => '' ),
  'assessment_diagnosis_5' =>
@@ -1743,7 +1749,6 @@ $manual_layouts = array(
           'data_type' => '2',
           'fld_length' => '50',
           'max_length' => '127',
-	      'edit_options' => '["0"]',
           'description' => '',
           'list_id' => '' ),
  'assessment_family_housing' =>

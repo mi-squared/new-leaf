@@ -10,7 +10,14 @@ require_once($GLOBALS['srcdir'].'/api.inc');
 /* for ??? */
 require_once($GLOBALS['srcdir'].'/forms.inc');
 
+require_once("$srcdir/encounter.inc");
+
 use OpenEMR\Common\Acl\AclMain;
+use OpenEMR\Common\Csrf\CsrfUtils;
+use OpenEMR\Services\CodeTypesService;
+use OpenEMR\Services\EncounterService;
+use OpenEMR\Services\FacilityService;
+use OpenEMR\Services\ListService;
 
 /** CHANGE THIS - name of the database table associated with this form **/
 $table_name = 'form_intake';
@@ -31,6 +38,9 @@ require_once('array.php');
 *
 *foreach($field_names as $key=>$val)
  * */
+//***Fixing the date_create so we can save it when end use chooses the m/d/Y option
+
+
 $field_names = [];
 foreach($manual_layouts as $key=>$val)
 {
@@ -54,14 +64,18 @@ foreach($manual_layouts as $key=>$val)
     /*if ($val == 'date')*/
     if ($datatype == 4)
     {
-	if (isset($_POST[$key]))
-	{
-            $field_names[$key]=$_POST[$key];
-	}
-	else
-	{
-            $field_names[$key]="";
-	}
+        if (isset($_POST['form_'.$key]))
+        {
+            $date = $_POST['form_'.$key];
+            $format = 'Y-m-d';
+            $datetime = date($format, strtotime($date));
+
+                $field_names[$key]=$datetime;
+        }
+        else
+        {
+                $field_names[$key]=date('Y-m-d');
+        }
     }
     /*if (($val == 'checkbox_list' ))*/
     if ($datatype == 21)
@@ -140,7 +154,7 @@ foreach($manual_layouts as $key=>$val)
 
 /* escape form data for entry to the database. */
 foreach ($field_names as $k => $var) {
-  $field_names[$k] = add_escape_custom($var);
+  $field_names[$k] = htmlspecialchars($var);
 }
 
 if ($encounter == '') $encounter = date('Ymd');

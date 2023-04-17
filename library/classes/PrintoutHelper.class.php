@@ -137,7 +137,7 @@ class PrintoutHelper extends ORDataObject
     }
 
     public static function generate_value($class, $value): string {
-        $string = '<div class="'.$class.' ">'.htmlspecialchars($value).'</div>';
+        $string = '<div class="'.$class.' ">' . $value .'</div>';
         if ($value !== '') {
             return $string;
         } else {
@@ -221,4 +221,21 @@ class PrintoutHelper extends ORDataObject
 
 }
 
+$data['id'] = $_POST['id'] ?? null ;
+if (isset($_POST['func']) && $_POST['func'] == 'getIssues' && $_POST['pid']) {
 
+    $res = sqlStatement("SELECT DISTINCT type, diagnosis, title, short_desc, REPLACE(diagnosis, 'ICD10:', '') AS diag
+            FROM lists
+            LEFT JOIN icd10_dx_order_code
+            ON REPLACE(diagnosis, 'ICD10:', '') = formatted_dx_code
+            WHERE pid = ?
+            AND type = ?
+            AND (activity = 1 OR enddate IS NULL)", array($_POST['pid'], "medical_problem"));
+                while($row = sqlFetchArray($res)) {
+        array_push($data, $row);
+    }
+    $data['type'] = "problems";
+    $data['title'] = "Health Problems to be Aware of.";
+
+    echo json_encode($data);
+}

@@ -304,7 +304,8 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data = "<div class = 'hcontainer'>";
     $data .= "<div class = 'intake'>";
     $data .= PrintoutHelper::generate_title( 'header', "Intake Exam") . "<div></div>";
-    $data .= PrintoutHelper::generate_line_title_val("Date of Intake Exam",  $patient_data['date']);
+    $data .= PrintoutHelper::generate_line_title_val("Date of Intake Exam",  substr($patient_data['date_created'], 0, 10));
+    $data .= PrintoutHelper::generate_line_title_val("Last Modified Date",  $patient_data['date']);
 
     $data .= PrintoutHelper::generate_title( 'header2', "Presenting Issue/Cheif Complaint") . "<div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Presenting Issue/Chief Complaint", $patient_data['presenting_issue']);
@@ -491,7 +492,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_title( 'header3', "OTHER ISSUES") . "<div></div><div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Other",
         PrintoutHelper::getRating($patient_data['symptoms_other1_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_other1_rating']);
+    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_other1_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Other:",
         PrintoutHelper::getRating($patient_data['symptoms_other2_rating']));
@@ -500,9 +501,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_line_title_val("Other:",
         PrintoutHelper::getRating($patient_data['symptoms_other3_rating']));
     $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_other3_text']);
-    $data .= PrintoutHelper::generate_line_title_val("Other:",
-        PrintoutHelper::getRating($patient_data['symptoms_other4_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_other4_text']);
+
 
 
     $data .= "</div>"; //end of current symptoms
@@ -807,7 +806,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_value('twoThruFiveText', $patient_data['education_learning_disabilities']);
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle ', "Employment / Extracirricular Activities") . "" ;
-    $data .= PrintoutHelper::generate_value('twoThruFiveText', $patient_data['medication_name_1']);
+    $data .= PrintoutHelper::generate_value('twoThruFiveText', $patient_data['education_employment_hobbies']);
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle ', "Employment hours per week:") . "" ;
     $data .= PrintoutHelper::generate_value('', $patient_data['education_employment_hours_per_week']);
@@ -832,7 +831,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
     $data .= "<div class = 'interpetive'>";
     $data .= PrintoutHelper::generate_title( 'header2 mhtitle oneToThreeText', "Interpretive Summary: (rationale for diagnoses; please include diagnostic criteria and contextual factors that justify all diagnoses generated)");
-    $data .= PrintoutHelper::generate_value('oneToThreeText', $patient_data['medication_name_1']);
+    $data .= PrintoutHelper::generate_value('oneToThreeText', $patient_data['assessment_presenting_problem']);
 
     $data .= PrintoutHelper::generate_title( 'header3 mhtitle oneToThreeText', "Diagnosis");
     $data .= PrintoutHelper::generate_value('twoThruThreeText', $patient_data['assessment_diagnosis_1']);

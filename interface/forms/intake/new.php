@@ -8,11 +8,14 @@ require_once('../../globals.php');
 require_once($GLOBALS['srcdir'].'/api.inc');
 /* for generate_form_field, ?? */
 require_once($GLOBALS['srcdir'].'/options.inc.php');
+require_once($GLOBALS['srcdir'].'/forms.inc');
 /* note that we cannot include options_listadd.inc here, as it generates code before the <html> tag */
 
 use OpenEMR\Common\Acl\AclMain;
 use OpenEMR\Core\Header;
 use OpenEMR\Common\Csrf\CsrfUtils;
+
+$table_name = 'form_intake';
 
 /** CHANGE THIS name to the name of your form. **/
 $form_name = 'Intake Form';
@@ -21,8 +24,13 @@ $form_name = 'Intake Form';
 $form_folder = 'intake';
 
 require_once('array.php');
+$newid = formSubmit($table_name, array(), $_GET['id'], $userauthorized);
+/* link this form into the encounter. */
+addForm($encounter, $form_name, $newid, $form_folder, $pid, $userauthorized);
 
-$submiturl = $GLOBALS['rootdir'].'/forms/'.$form_folder.'/save.php?mode=new&amp;return=encounter';
+
+
+$submiturl = $GLOBALS['rootdir'].'/forms/'.$form_folder.'/save.php?mode=update&id='.$newid;
 /* no get logic here */
 
 ?><!DOCTYPE html>
@@ -36,6 +44,7 @@ $submiturl = $GLOBALS['rootdir'].'/forms/'.$form_folder.'/save.php?mode=new&amp;
 <?php Header::setupHeader('datetime-picker'); ?>
 <!-- Form Specific Stylesheet. -->
 <link rel="stylesheet" href="../../forms/<?php echo $form_folder; ?>/style.css">
+<script src="../../forms/form_picker/formHelper.js"></script>
 
 <script>
 // this line is to assist the calendar text boxes
@@ -80,6 +89,8 @@ function submitme() {
                 <fieldset class="top_buttons">
                     <input type="button" class="save btn-primary" value="<?php xl('Save','e'); ?>" />
                     <input type="button" class="dontsave btn-danger" value="<?php xl('Don\'t Save','e'); ?>" />
+                    <input type="button" class="save_continue btn-primary"  value="<?php xl('Save and Continue','e'); ?>" />
+
                 </fieldset>
             </div><!-- end top_buttons -->
 
@@ -97,68 +108,213 @@ function submitme() {
                 <fieldset>
                     <input type="button" class="save btn-primary" value="<?php xl('Save','e'); ?>" />
                     <input type="button" class="dontsave btn-danger" value="<?php xl('Don\'t Save','e'); ?>" />
+                    <input type="button" class="save_continue btn-primary"  value="<?php xl('Save and Continue','e'); ?>" />
+
                 </fieldset>
             </div><!-- end bottom_buttons -->
         </div>
     </div>
 </form>
 <script>
-// jQuery stuff to make the page a little easier to use
+    // jQuery stuff to make the page a little easier to use
 
-$(function () {
-    $(".save").click(function() { top.restoreSession(); document.forms["<?php echo $form_folder; ?>"].submit(); });
-    $(".dontsave").click(function() { location.href='parent.closeTab(window.name, false)'; });
+    $(function () {
 
-	$(".sectionlabel input").click( function() {
-    	var section = $(this).attr("data-section");
-		if ( $(this).prop('checked' ) ) {
-			$("#"+section).show();
-		} else {
-			$("#"+section).hide();
-		}
+        $(".save").click(function() { top.restoreSession(); document.forms["<?php echo $form_folder; ?>"].submit(); });
+        $(".dontsave").click(function() { location.href='parent.closeTab(window.name, false)'; });
+
+
+        $('input[type="checkbox"][name^="check_substance_use"]').each(function() {
+            $(this).prop('checked', true); // Check the checkbox
+            $(this).hide(); // Hide the checkbox
+        });
+
+        $('input[type="checkbox"][name^="check_mh_currently_seeing"]').each(function() {
+            $(this).prop('checked', true); // Check the checkbox
+            $(this).hide(); // Hide the checkbox
+        });
+
+
+        $(".save").click(function() { top.restoreSession(); document.forms["<?php echo $form_folder; ?>"].submit(); });
+
+        <?php if ($returnurl == 'show.php') { ?>
+        $(".dontsave").click(function() { location.href='<?php echo $returnurl; ?>'; });
+        <?php } else { ?>
+        $(".dontsave").click(function() { parent.closeTab(window.name, false); });
+        <?php } ?>
+
+        $(".print").click(function() { PrintForm(); });
+        $(".sectionlabel input").click( function() {
+            var section = $(this).attr("data-section");
+            if ( $(this).prop('checked' ) ) {
+                $("#"+section).show();
+            } else {
+                $("#"+section).hide();
+            }
+        });
+
+        $(".sectionlabel input").prop( 'checked', true );
+        $(".section").show();
+
+        $('.datepicker').datetimepicker({
+            <?php $datetimepicker_timepicker = false; ?>
+            <?php $datetimepicker_showseconds = false; ?>
+            <?php $datetimepicker_formatInput = true; ?>
+            <?php require($GLOBALS['srcdir'] . '/js/xl/jquery-datetimepicker-2-5-4.js.php'); ?>
+            <?php // can add any additional javascript settings to datetimepicker here; need to prepend first setting with a comma ?>
+        });
+
+
+
+
+        $('.save_continue').on('click', function() {
+            var formData = {};
+            console.log("click");
+
+            // Get all form fields and add them to the formData object
+            $('input, textarea, select').each(function() {
+                if (this.type === 'checkbox') {
+                    if (this.name.includes("[]")) {
+                        var name = this.name.replace("[]", "");
+                        formData[name] = formData[name] || [];
+                        if (this.checked) {
+                            formData[name].push(this.value);
+                        }
+                    } else if (this.checked) {
+                        formData[this.name] = this.checked;
+                    }
+                } else {
+                    formData[this.name] = this.value;
+                }
+            });
+
+            $('input[type="checkbox"]:not(:checked)').each(function() {
+                if (this.name.includes("[]")) {
+                    var name = this.name.replace("[]", "");
+                    formData[name] = formData[name] || [];
+                    var index = formData[name].indexOf(this.value);
+                    if (index !== -1) {
+                        formData[name].splice(index, 1);
+                    }
+                }
+            });
+
+
+            // Make an AJAX call to save the form data
+            $.ajax({
+                type: "POST",
+                url: "<?php echo $submiturl ?>",
+                data: formData,
+                traditional: true, // Ensure traditional serialization of arrays
+                success: function(data) {
+                    console.log("Form data saved successfully.");
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error saving form data: " + error);
+                }
+            });
+        });
+
+
+
+        <?php
+
+
+
+        ?>
+
+        let diagPickerParent = new DiagPickerParent("form_assessment_diagnosis_1", $('#form_assessment_diagnosis_1').val(), "<?php echo $pid ?>", "getIssues", "intake");
+
+
+
+        $('#add_issue').on('click', function(event) {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+
+            // Simulate a click on the save_and_continue button
+            $('.save_continue').click();
+
+            // Wait for 500 milliseconds before opening the pop-up window
+            setTimeout(function() {
+                // open the pop-up window with the saved form data as a query string parameter
+                let URL = '../summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
+                    + encodeURIComponent('medical_problem') + '&action=intake';
+                dlgopen(URL, '_blank', 650, 500, '', 'Add/Edit Issue');
+            }, 500);
+        });
+
+
+        // add an event listener to listen for a message from the pop-up window
+        window.addEventListener('message', function(event) {
+            if (event.data.formData) {
+                let formData = event.data.formData;
+                if (formData !== null) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '<?php echo $submiturl; ?>',
+                        data: formData,
+                        success: function(response) {
+                            console.log('Form data saved successfully!');
+                            // simulate a click on the save and continue button
+                            $('.save_continue').click();
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('An error occurred while saving the form data:', error);
+                        }
+                    });
+                }
+                // clear the form data from localStorage
+                localStorage.removeItem('form_data');
+            } else if (event.data.action === 'close') {
+                // load the view.php screen
+                window.location.href = '<?php echo $thisurl; ?>';
+            }
+        }, false);
+
+
+
     });
 
-    $(".sectionlabel input").prop( 'checked', true );
-    $(".section").show();
+    function dopclick(id, category) {
+        console.log("ID = " + id + "Category: " + category);
 
-    $('.datepicker').datetimepicker({
-        <?php $datetimepicker_timepicker = false; ?>
-        <?php $datetimepicker_showseconds = false; ?>
-        <?php $datetimepicker_formatInput = false; ?>
-        <?php require($GLOBALS['srcdir'] . '/js/xl/jquery-datetimepicker-2-5-4.js.php'); ?>
-        <?php // can add any additional javascript settings to datetimepicker here; need to prepend first setting with a comma ?>
-    });
-    $('.datetimepicker').datetimepicker({
-        <?php $datetimepicker_timepicker = true; ?>
-        <?php $datetimepicker_showseconds = false; ?>
-        <?php $datetimepicker_formatInput = false; ?>
-        <?php require($GLOBALS['srcdir'] . '/js/xl/jquery-datetimepicker-2-5-4.js.php'); ?>
-        <?php // can add any additional javascript settings to datetimepicker here; need to prepend first setting with a comma ?>
-    });
+        // check if URL contains action=intake query parameter
+        var urlParams = new URLSearchParams(window.location.search);
+        var action = urlParams.get('action');
 
-});
+        // save form data to local storage
+        if (action === 'intake') {
+            localStorage.setItem('form_data', JSON.stringify($('form').serializeArray()));
+            console.log('Form data saved to local storage.');
+        }
 
-    function dopclick(id, category, field) {
-        top.restoreSession();
-        if (category == 0) category = '';
-        dlgopen('../summary/add_edit_issue.php?issue=' + encodeURIComponent(id) + '&thistype=' + encodeURIComponent(category)+ '&thisfield=' + field , '_blank', 650, 500, '', "Add\/Edit Issue");
+        // get the list of options for the category dropdown
+        var aopts = document.getElementById('assessment_template_' + category).options;
 
+        // find the selected option
+        var selected_option = '';
+        for (var index = 0; index < aopts.length; index++) {
+            if (aopts[index].selected) {
+                selected_option = aopts[index].value;
+                break;
+            }
+        }
+
+        // open the pop-up window with the selected option as a query string parameter
+        dlgopen('../summary/add_edit_issue.php?issue=' + encodeURIComponent(id) + '&thistype=' + encodeURIComponent(category) + '&selected_option=' + encodeURIComponent(selected_option), '_blank', 650, 500, '', "Add\/Edit Issue");
     }
 
     function importDiagnosis(field) {
-        document.getElementById(field).value = $('#diagnosisform').serializeArray();
+        let formData = $('#diagnosisform').serializeArray();
+        let fieldValue = '';
+        formData.forEach(function(item) {
+            if (item.name === 'diagnosis') {
+                fieldValue = item.value;
+            }
+        });
+        $('#' + field).val(fieldValue);
     }
 
-    function setDiagnosis(id, category, field) {
-        let getD = new Promise(function(resolve) {
-            dopclick(id, category, field);
-            resolve(field);
-        });
-        getD.then(function(value) {
-            let f = value;
-            importDiagnosis(f);
-        });
-    }
 
 </script>
 </body>
