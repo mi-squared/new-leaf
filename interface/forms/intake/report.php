@@ -305,7 +305,6 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= "<div class = 'intake'>";
     $data .= PrintoutHelper::generate_title( 'header', "Intake Exam") . "<div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Date of Intake Exam",  substr($patient_data['date_created'], 0, 10));
-    $data .= PrintoutHelper::generate_line_title_val("Last Modified Date",  $patient_data['date']);
 
     $data .= PrintoutHelper::generate_title( 'header2', "Presenting Issue/Cheif Complaint") . "<div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Presenting Issue/Chief Complaint", $patient_data['presenting_issue']);
