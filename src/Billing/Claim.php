@@ -1625,7 +1625,7 @@ class Claim
         $tmp = ($prockey < 0 || empty($this->procs[$prockey]['provider_id'])) ?
         $this->provider : $this->procs[$prockey]['provider'];
         if (empty($tmp['taxonomy'])) {
-            return '207Q00000X';
+            return '';
         }
 
         return $this->x12Clean(trim($tmp['taxonomy']));
@@ -1664,7 +1664,7 @@ class Claim
     public function referrerTaxonomy()
     {
         if (empty($this->referrer['taxonomy'])) {
-            return '207Q00000X';
+            return '';
         }
 
         return $this->x12Clean(trim($this->referrer['taxonomy']));
@@ -1703,7 +1703,7 @@ class Claim
     public function supervisorTaxonomy()
     {
         if (empty($this->supervisor['taxonomy'])) {
-            return '207Q00000X';
+            return '';
         }
 
         return $this->x12Clean(trim($this->supervisor['taxonomy']));
@@ -1752,7 +1752,7 @@ class Claim
     public function billingProviderTaxonomy()
     {
         if (empty($this->billing_prov_id['taxonomy'])) {
-            return '207Q00000X';
+            return '';
         }
         return $this->x12Clean(trim($this->billing_prov_id['taxonomy']));
     }
