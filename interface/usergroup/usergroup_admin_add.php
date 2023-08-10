@@ -349,7 +349,8 @@ foreach (array(1 => xl('None{{Authorization}}'), 2 => xl('Only Mine'), 3 => xl('
 
 <tr>
 <td><span class="text"><?php echo xlt('Taxonomy'); ?>: </span></td>
-<td><input type="text" name="taxonomy" style="width:120px;" class="form-control" value="207Q00000X"></td>
+<!--    removed default taxononmy code-->
+<td><input type="text" name="taxonomy" style="width:120px;" class="form-control" value=""></td>
     <td><span class="text"><?php echo xlt('Supervisor'); ?>: </span></td>
     <td>
         <select name="supervisor_id" style="width:150px;" class="form-control">

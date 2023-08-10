@@ -181,9 +181,13 @@ function TimeToHHMMSS($TimeValue)
     if (trim($TimeValue) == '') {
         return '';
     }
+//***nlbh add / modify.  Need to bring this entire function in
+    $is_pm = (stripos($TimeValue, 'PM') !== false || stripos($TimeValue, 'pm') !== false);
+    $dt = new DateTime('1970-01-01' . $TimeValue);
 
-    $date = new DateTimeImmutable('1970-01-01' . $TimeValue);
-    return $date->format('H:i:s');
+
+
+    return $dt->modify('+0 hours')->format('H:i:s');;
 }
 
 

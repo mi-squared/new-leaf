@@ -996,3 +996,11 @@ ALTER TABLE `module_configuration` ADD COLUMN `date_modified` DATETIME DEFAULT C
 
 #IfUpdateEditOptionsNeeded remove DEM K birth_fname, pubpid, name_history
 #EndIf
+-- ***NLBH add
+#IfMissingColumn form_encounter startTime
+ALTER TABLE `form_encounter` ADD `startTime` DATETIME DEFAULT NULL COMMENT 'Manual entry of the start time of encounter';
+#EndIf
+
+#IfMissingColumn form_encounter endTime
+ALTER TABLE `form_encounter` ADD `endTime` DATETIME DEFAULT NULL COMMENT 'Manual entry of the end time of encounter';
+#EndIf

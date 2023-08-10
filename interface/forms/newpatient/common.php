@@ -515,6 +515,14 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                                 <input type='text' class='form-control datepicker' name='form_date' id='form_date' <?php echo ($disabled ?? '') ?> value='<?php echo $viewmode ? attr(oeFormatDateTime($result['date'])) : attr(oeFormatDateTime(date('Y-m-d H:i:00'))); ?>' title='<?php echo xla('Date of service'); ?>' />
                             </div>
                         </div>
+<!--                        ***nlbh add-->
+                        <div class="col-sm">
+                            <div class="form-group">
+                                <label for='endTime' class="text-right"><?php echo xlt('End Time'); ?>:</label>
+                                <input type='text' class='form-control datepicker' name='endTime' id='endTime' <?php echo ($disabled ?? '') ?> value='<?php echo $viewmode ? attr(oeFormatDateTime($result['endTime'])) : attr(oeFormatDateTime(date('Y-m-d H:i:00'))); ?>' title='<?php echo xla('End Time'); ?>' />
+                            </div>
+                        </div>
+<!--                        ***nlbh add end-->
                         <div class="col-sm <?php echo ($GLOBALS['gbl_visit_onset_date'] == 1) ?: 'd-none'; ?>">
                             <div class="form-group">
                                 <label for='form_onset_date' class="text-right"><?php echo xlt('Onset/hosp. date:'); ?> &nbsp;<i id='onset-tooltip' class="fa fa-info-circle text-primary" aria-hidden="true"></i></label>
@@ -548,6 +556,7 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                                 </select>
                             </div>
                         </div>
+                    </div>
                         <div class="col-sm <?php echo ($GLOBALS['hide_billing_widget'] != 1) ?: 'd-none';?>">
                             <div class="form-group">
                                 <label for='in_collection' class="text-right"><?php echo xlt('In Collection'); ?>:</label>
@@ -557,7 +566,13 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                                 </select>
                             </div>
                         </div>
+<!--                    ***nlbh add-->
+                    <div class="form-row align-items-center">
+
+
                     </div>
+<!--***nlbh add end-->
+
 
                     <div class="form-row align-items-center">
                         <div class="col-sm">
@@ -674,10 +689,15 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                     <fieldset>
                         <legend><?php echo xlt('Reason for Visit') ?></legend>
                         <div class="form-row mx-3 h-100">
-                            <textarea name="reason" id="reason" class="form-control" cols="80" rows="4"><?php echo $viewmode ? text($result['reason']) : text($GLOBALS['default_chief_complaint']); ?></textarea>
+<!--                            ***nlbh edit columns-->
+                            <textarea name="reason" id="reason" class="form-control" cols="160" rows="8"><?php echo $viewmode ? text($result['reason']) : text($GLOBALS['default_chief_complaint']); ?></textarea>
                         </div>
                     </fieldset>
                 </div>
+<!--             ***nlbh add   -->
+            </div>
+            <div class="form-row">
+<!--                ***nlbh add end-->
                 <div class="col-sm <?php displayOption('enc_enable_issues');?>">
                     <?php
                     // Before we even check for auth, see if we will even display

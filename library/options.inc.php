@@ -1237,8 +1237,16 @@ function generate_form_field($frow, $currvalue)
             $option_id = $lrow['option_id'];
             $option_id_esc = htmlspecialchars($option_id, ENT_QUOTES);
             $restype = substr($avalue[$option_id], 0, 1);
-            $resnote = substr($avalue[$option_id], 2);
+            //***NLBH Add. This function is expecting 2 extra characters to be added to it,
+            //so we need to skip this if there is not a number and a : prepending.
 
+            //read the first and second character, if the first character isn't aa digit and the  second a :
+            //skip this step.
+            $test = substr($avalue[$option_id], 0, 2);
+            $resnote = $avalue[$option_id];
+            if(ctype_digit($test[0])  && $test[1] === ':') {
+            $resnote = substr($avalue[$option_id], 2);
+            }
             // Added 5-09 by BM - Translate label if applicable
             echo "<tr><td>" . htmlspecialchars(xl_list_label($lrow['title']), ENT_NOQUOTES) . "&nbsp;</td>";
 

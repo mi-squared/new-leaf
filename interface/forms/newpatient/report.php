@@ -25,13 +25,23 @@ function newpatient_report($pid, $encounter, $cols, $id)
         $provider = $userService->getUser($result["provider_id"]);
         $referringProvider = $userService->getUser($result["referring_provider_id"]);
         $calendar_category = (new AppointmentService())->getOneCalendarCategory($result['pc_catid']);
+       //***nlbh add
+        $startTime = new DateTime($result['date']);
+        $endTime = new DateTime($result['endTime']);
+        $diff = $endTime->diff($startTime)->format('%H:%I:%S');
+//***nlbh add end
         print "<span class=bold>" . xlt('Facility') . ": </span><span class=text>" . text($result["facility_name"]) . "</span><br />\n";
         if (empty($result['sensitivity']) || AclMain::aclCheckCore('sensitivities', $result['sensitivity'])) {
             print "<span class=bold>" . xlt('Category') . ": </span><span class=text>" . text($calendar_category[0]['pc_catname']) . "</span><br />\n";
             print "<span class=bold>" . xlt('Reason') . ": </span><span class=text>" . nl2br(text($result["reason"])) . "</span><br />\n";
-            print "<span>" . xlt('Provider') . ": </span><span class=text>" . text($provider['lname'] . ", " . $provider['fname']) . "</span><br />\n";
-            print "<span>" . xlt('Referring Provider') . ": </span><span class=text>" . text(($referringProvider['lname'] ?? '') . ", " . ($referringProvider['fname'] ?? '')) . "</span><br />\n";
-            print "<span>" . xlt('POS Code') . ": </span><span class=text>" . text(sprintf('%02d', trim($result['pos_code'] ?? ''))) . "</span><br />\n";
+            print "<span class=bold>" . xlt('Provider') . ": </span><span class=text>" . text($provider['lname'] . ", " . $provider['fname']) . "</span><br />\n";
+            print "<span class=bold>" . xlt('Referring Provider') . ": </span><span class=text>" . text(($referringProvider['lname'] ?? '') . ", " . ($referringProvider['fname'] ?? '')) . "</span><br />\n";
+            print "<span class=bold>" . xlt('POS Code') . ": </span><span class=text>" . text(sprintf('%02d', trim($result['pos_code'] ?? ''))) . "</span><br />\n";
+            //***nlbh add
+            print "<span class=bold>" . xlt('Start Time') . ": </span><span class=text>" . text( trim(date('h:i A', strtotime($result['date'])) ?? '')). "</span><br />\n";
+            print "<span class=bold>" . xlt(' End Time') . ": </span><span class=text>" . text( trim(date('h:i A', strtotime($result['endTime'])) ?? '')). "</span><br />\n";
+            print "<span class=bold>" . xlt(' Total Time') . ": </span><span class=text>" . text( trim($diff ?? '')). "</span><br />\n";
+            //***nlbh add end
         }
     }
 

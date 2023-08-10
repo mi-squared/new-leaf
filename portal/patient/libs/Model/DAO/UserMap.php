@@ -101,7 +101,7 @@ class UserMap implements IDaoMap, IDaoMap2
             self::$FM["Phonecell"] = new FieldMap("Phonecell", "users", "phonecell", false, FM_TYPE_VARCHAR, 30, null, false);
             self::$FM["Notes"] = new FieldMap("Notes", "users", "notes", false, FM_TYPE_TEXT, null, null, false);
             self::$FM["CalUi"] = new FieldMap("CalUi", "users", "cal_ui", false, FM_TYPE_TINYINT, 4, "1", false);
-            self::$FM["Taxonomy"] = new FieldMap("Taxonomy", "users", "taxonomy", false, FM_TYPE_VARCHAR, 30, "207Q00000X", false);
+            self::$FM["Taxonomy"] = new FieldMap("Taxonomy", "users", "taxonomy", false, FM_TYPE_VARCHAR, 30, "", false); //***nlbh remove default taxonomy code
             //self::$FM["SsiRelayhealth"] = new FieldMap("SsiRelayhealth","users","ssi_relayhealth",false,FM_TYPE_VARCHAR,64,null,false);
             self::$FM["Calendar"] = new FieldMap("Calendar", "users", "calendar", false, FM_TYPE_TINYINT, 1, null, false);
             self::$FM["AbookType"] = new FieldMap("AbookType", "users", "abook_type", false, FM_TYPE_VARCHAR, 31, null, false);

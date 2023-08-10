@@ -17,7 +17,7 @@ use OpenEMR\Menu\MenuEvent;
 use OpenEMR\Menu\PatientMenuEvent;
 use OpenEMR\Events\PatientDemographics\RenderEvent;
 use OpenEMR\Common\Csrf\CsrfUtils;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 function oe_module_priorauth_add_menu_item(MenuEvent $event)

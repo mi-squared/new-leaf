@@ -76,7 +76,11 @@
         "vlucas/phpdotenv": "5.5.0",
         "waryway/php-traits-library": "1.0.4",
         "yubico/u2flib-server": "1.0.2",
-        "twilio/sdk": "6.44.3"
+        "twilio/sdk": "6.44.3",
+
+        "mi-squared/oe-patient-privacy": "dev-master",
+        "mi-squared/oe-import": "dev-master",
+        "mi-squared/new-leaf-importer": "dev-master"
     },
     "config": {
         "platform": {
@@ -99,6 +103,22 @@
         {
             "type": "git",
             "url": "https://github.com/openemr/oe-module-cqm"
+        },
+        {
+            "type" : "git",
+            "url" : "https://github.com/mi-squared/oe-patient-privacy.git"
+        },
+        {
+            "type" : "git",
+            "url" : "https://github.com/mi-squared/new-leaf-importer.git"
+        },
+        {
+            "type" : "git",
+            "url" : "https://github.com/mi-squared/oe-import.git"
+        },
+        {
+            "type" : "git",
+            "url" : "https://github.com/mi-squared/oe-module-installer-plugin.git"
         }
     ],
     "autoload": {
