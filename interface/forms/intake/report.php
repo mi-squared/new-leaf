@@ -71,6 +71,12 @@ function intake_report( $pid, $encounter, $cols, $id) {
             margin-top: 15px;
         }
 
+        .comments{
+            grid-column: 1 / -1;
+            margin: 0 0 0 2ch;
+
+        }
+
          .intake {
             display: grid;
             grid-template-columns: 300px 600px;
@@ -80,6 +86,19 @@ function intake_report( $pid, $encounter, $cols, $id) {
             border-radius: 5px;
             background-color: #fff9db;
             padding:25px;
+
+        }
+
+          .presentingIssue {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+            row-gap:1ch;
+            border: 1px solid black;
+            border-radius: 5px;
+            background-color: #fff9db;
+            padding:25px;
+            margin: 3ch 0 0 0;
 
         }
 
@@ -105,23 +124,39 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
         }
 
-        .substanceUse{
-            display: grid;
-            grid-template-columns: 300px 800px;
-            grid-template-rows: auto;
-            row-gap:1ch;
-            margin: 3ch 0 0 0;
-            border: 1px solid black;
-            border-radius: 5px;
-            background-color: #fff9db;
-            padding:25px;
+.substanceUse {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    row-gap: 1ch;
+    margin: 3ch 0 0 0;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #fff9db;
+    padding: 25px;
+}
+
+.substanceUse .header2 {
+    grid-template-columns: 1fr;
+
+}
+
+.substanceUse .row:nth-child(2n) {
+    background-color: #fff9db;
+    margin: 0 2px 3ch -1px;
+
+}
 
 
-        }
+
+.substanceUse .row:nth-child(2n+1) {
+    background-color: #f1ebd1;
+    margin: 0 0 0 0;
+}
 
         .legalHistory{
             display: grid;
-            grid-template-columns: 300px 800px;
+            grid-template-columns: 1fr;
             grid-template-rows: auto;
             row-gap:1ch;
             margin: 3ch 0 0 0;
@@ -143,7 +178,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
         .mentalHealth{
             display: grid;
-            grid-template-columns: 300px 200px 200px 150px 200px;
+            grid-template-columns: 300px repeat(4, 1fr);;
             grid-template-rows: auto;
             row-gap:1ch;
             margin: 3ch 0 0 0;
@@ -151,8 +186,6 @@ function intake_report( $pid, $encounter, $cols, $id) {
             border-radius: 5px;
             background-color: #d2c376;
             padding:25px;
-
-
         }
 
 
@@ -161,7 +194,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
         .medicalHistory{
             display: grid;
-            grid-template-columns: 250px 50px 100px 100px 100px;
+            grid-template-columns: repeat(5, 1fr);
             grid-template-rows: auto;
             row-gap:1ch;
                border: 1px solid black;
@@ -205,7 +238,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
         .familyAndSocial{
             display: grid;
-            grid-template-columns: 350px 200px 50px 200px;
+            grid-template-columns: repeat(4, 1fr);
             grid-template-rows: auto;
             row-gap:1ch;
             border: 1px solid black;
@@ -229,7 +262,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
         .edEmpHist{
             display: grid;
-            grid-template-columns: 300px 200px 300px 800px;
+            grid-template-columns: repeat(4, 1fr);
             grid-template-rows: auto;
             row-gap:1ch;
             border: 1px solid black;
@@ -295,7 +328,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
 
 
-}
+
 
     </style>
 
@@ -305,7 +338,9 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= "<div class = 'intake'>";
     $data .= PrintoutHelper::generate_title( 'header', "Intake Exam") . "<div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Date of Intake Exam",  substr($patient_data['date_created'], 0, 10));
+    $data .= "</div>";
 
+    $data .= "<div class = 'presentingIssue'>";
     $data .= PrintoutHelper::generate_title( 'header2', "Presenting Issue/Cheif Complaint") . "<div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Presenting Issue/Chief Complaint", $patient_data['presenting_issue']);
     $data .= "</div>"; //end of intake
@@ -525,7 +560,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
 
 
-    $data .= "<div class = 'legalHistory oneLineGrid'>";
+    $data .= "<div class = 'legalHistory '>";
     $data .= PrintoutHelper::generate_title( 'header2', "Legal History") . "<div></div>";
     $data .= PrintoutHelper::generate_title('header4',"Legal Comments:");
     $data .= PrintoutHelper::generate_value('',  $patient_data['legal_comments']);
@@ -559,8 +594,8 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_value('', $patient_data['mh_outpatient_therapy_last_year'] );
     $data .= PrintoutHelper::generate_value('', $patient_data['mh_outpatient_therapy_total_num'] );
 
-    $data .= PrintoutHelper::generate_value('header4', "Comments" );
-    $data .= PrintoutHelper::generate_value('twoToSixText', $patient_data['mh_comments'] );
+    $data .= PrintoutHelper::generate_value('header4 comments', "Comments" );
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['mh_comments'] );
 
     $currentlySeeing = explode('|', $patient_data['mh_currently_seeing']  );
     $data .= PrintoutHelper::generate_value('header3', "Currently Seeing" ) .
@@ -568,13 +603,13 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_value('header4', "Current Psych" );
     $data .= PrintoutHelper::generate_value('twoToSixText', explode(':', $currentlySeeing[0])[1]);
     $data .= PrintoutHelper::generate_value('header4', "Other MH Provider" );
-    $data .= PrintoutHelper::generate_value('twoToSixText', explode(':', $currentlySeeing[1])[1]);
+    $data .= PrintoutHelper::generate_value('comments', explode(':', $currentlySeeing[1])[1]);
     $data .= "</div>"; //mentalHealth
 
     $data .= "<div class = 'medicalHistory'>";//5 columns
     $data .= PrintoutHelper::generate_title( 'header2 mhtitle oneToSixText', "Medical History");
-    $data .= PrintoutHelper::generate_value('header4', "Significant History/problems:" );
-    $data .= PrintoutHelper::generate_value('twoToSixText', $patient_data['med_hist_comments'] );
+    $data .= PrintoutHelper::generate_value('header4 comments', "Significant History/problems:" );
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['med_hist_comments'] );
 
     $data .= PrintoutHelper::generate_value('header4', "Routine Medical Care:" );
     $data .= PrintoutHelper::generate_value('', $patient_data['med_hist_routine_medical_care']);
@@ -637,7 +672,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_value('', $patient_data['medication_side_effects_6']);
 
     $data .= PrintoutHelper::generate_title( 'header4 ', "Med Info from") ;
-    $data .= PrintoutHelper::generate_value('twoToSixText', PrintoutHelper::displayList($patient_data['medication_info_from']));
+    $data .= PrintoutHelper::generate_value('comments', PrintoutHelper::displayList($patient_data['medication_info_from']));
     $data .= "<div></div><div></div><div></div>";
 
     $data .= "</div>"; //currentMedications
@@ -765,19 +800,19 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
     $data .= PrintoutHelper::generate_title( 'header2 mhheadertitle oneToFiveText', "Social History")  ;
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle oneToFiveText', "Include aspects of family history, relationships with others/family, history of significant relationships/marriages. ") . "" ;
-    $data .= PrintoutHelper::generate_value('oneToFiveText', $patient_data['family_social_history_comments']);
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['family_social_history_comments']);
 
     $data .= PrintoutHelper::generate_title( 'header2 mhheadertitle oneToFiveText', "Trauma History:")  ;
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle oneToFiveText', "Include history of any phycial abuse, sexual abuse, domestic violence, other trauma. ") . "" ;
-    $data .= PrintoutHelper::generate_value('oneToFiveText', $patient_data['family_social_history_trauma']);
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['family_social_history_trauma']);
 
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle oneToFiveText', "Previous Mental Health/Substance Abuse problems for Family: ") . "" ;
-    $data .= PrintoutHelper::generate_value('oneToFiveText', $patient_data['family_social_history_mh_sa_comments']);
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['family_social_history_mh_sa_comments']);
 
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle oneToFiveText', "Are there cultural, ethnic, or family issues that are causing you problems or might affect your treatment? If yes, please explain. ") . "" ;
-    $data .= PrintoutHelper::generate_value('oneToFiveText', $patient_data['family_social_history_cultural_ethnic']);
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['family_social_history_cultural_ethnic']);
 
     $data .= "</div>"; //familyAndSocial
 
@@ -799,13 +834,13 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_value('', $patient_data['education_grade_level']);
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle ', "Academic History") . "" ;
-    $data .= PrintoutHelper::generate_value('twoThruFiveText', $patient_data['education_academic_history']);
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['education_academic_history']);
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle ', "Learning Disabilities / IEP") . "" ;
-    $data .= PrintoutHelper::generate_value('twoThruFiveText', $patient_data['education_learning_disabilities']);
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['education_learning_disabilities']);
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle ', "Employment / Extracirricular Activities") . "" ;
-    $data .= PrintoutHelper::generate_value('twoThruFiveText', $patient_data['education_employment_hobbies']);
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['education_employment_hobbies']);
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle ', "Employment hours per week:") . "" ;
     $data .= PrintoutHelper::generate_value('', $patient_data['education_employment_hours_per_week']);
@@ -813,7 +848,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_value('', $patient_data['education_employment_type']);
 
     $data .= PrintoutHelper::generate_title( 'header4 mhheadertitle ', "Coworker Peer Relations") . "" ;
-    $data .= PrintoutHelper::generate_value('twoThruFiveText', $patient_data['education_employment_peer_relations']);
+    $data .= PrintoutHelper::generate_value('comments', $patient_data['education_employment_peer_relations']);
 
     $data .= "</div>"; //mentalStatus
 

@@ -177,7 +177,7 @@ class PrintoutHelper extends ORDataObject
         foreach($explode as $drug){
             $item = explode(':', $drug);
             if ($item[1] !== '') {
-                $string .= self::generate_checkbox(1, '', $item[0]) .'<div>'. $item[1] . '</div>';
+                $string .= self::generate_checkbox(1, 'row', $item[0]) .'<div class="row">'. $item[1] . '</div>';
 
             }
 
