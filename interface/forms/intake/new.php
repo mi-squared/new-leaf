@@ -28,9 +28,14 @@ $newid = formSubmit($table_name, array(), $_GET['id'], $userauthorized);
 /* link this form into the encounter. */
 addForm($encounter, $form_name, $newid, $form_folder, $pid, $userauthorized);
 
+$thisurl = $GLOBALS['rootdir'].'/forms/'.$form_folder.'/view.php?id=' . $newid . '#add_issue';
 
-
-$submiturl = $GLOBALS['rootdir'].'/forms/'.$form_folder.'/save.php?mode=update&id='.$newid;
+$submiturl = $GLOBALS['rootdir'].'/forms/'.$form_folder.'/save.php?formname=intake&mode=update&id='.$newid;
+if (isset($_GET['mode']) && $_GET['mode'] == 'noencounter') {
+    $returnurl = 'show.php';
+} else {
+    $returnurl = $GLOBALS['form_exit_url'];
+}
 /* no get logic here */
 
 ?><!DOCTYPE html>
@@ -119,6 +124,7 @@ function submitme() {
     // jQuery stuff to make the page a little easier to use
 
     $(function () {
+        let saveContinueClicked = false;
 
         $(".save").click(function() { top.restoreSession(); document.forms["<?php echo $form_folder; ?>"].submit(); });
         $(".dontsave").click(function() { location.href='parent.closeTab(window.name, false)'; });
@@ -168,6 +174,13 @@ function submitme() {
 
 
         $('.save_continue').on('click', function() {
+
+            if (saveContinueClicked) {
+                // If a save_continue button is already clicked, return without doing anything
+                return;
+            }
+
+            saveContinueClicked = true;
             var formData = {};
             console.log("click");
 
@@ -208,9 +221,12 @@ function submitme() {
                 traditional: true, // Ensure traditional serialization of arrays
                 success: function(data) {
                     console.log("Form data saved successfully.");
+                    window.location.href = '<?php echo $thisurl; ?>';
+                    saveContinueClicked = false;
                 },
                 error: function(xhr, status, error) {
                     console.error("Error saving form data: " + error);
+                    saveContinueClicked = false;
                 }
             });
         });
@@ -236,9 +252,11 @@ function submitme() {
 
             // Wait for 500 milliseconds before opening the pop-up window
             setTimeout(function() {
+                let incdir = "<?php echo $GLOBALS['incdir'] ?>";
                 // open the pop-up window with the saved form data as a query string parameter
-                let URL = '../summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
+                let URL =  '/interface/patient_file/summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
                     + encodeURIComponent('medical_problem') + '&action=intake';
+                console.log("new" + URL);
                 dlgopen(URL, '_blank', 650, 500, '', 'Add/Edit Issue');
             }, 50);
         });

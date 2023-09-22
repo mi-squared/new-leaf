@@ -175,7 +175,7 @@ function PrintForm() {
 // jQuery stuff to make the page a little easier to use
 
 $(function () {
-
+    let saveContinueClicked = false;
     $(".save").click(function() { top.restoreSession(); document.forms["<?php echo $form_folder; ?>"].submit(); });
     $(".dontsave").click(function() { location.href='parent.closeTab(window.name, false)'; });
 
@@ -224,9 +224,13 @@ $(function () {
 
 
     $('.save_continue').on('click', function() {
+        if (saveContinueClicked) {
+            // If a save_continue button is already clicked, return without doing anything
+            return;
+        }
         var formData = {};
         console.log("click");
-
+        saveContinueClicked = true;
         // Get all form fields and add them to the formData object
         $('input, textarea, select').each(function() {
             if (this.type === 'checkbox') {
@@ -264,9 +268,11 @@ $(function () {
             traditional: true, // Ensure traditional serialization of arrays
             success: function(data) {
                 console.log("Form data saved successfully.");
+                saveContinueClicked = false;
             },
             error: function(xhr, status, error) {
                 console.error("Error saving form data: " + error);
+                saveContinueClicked = false;
             }
         });
     });
@@ -296,9 +302,10 @@ $(function () {
 
         // Wait for 500 milliseconds before opening the pop-up window
         setTimeout(function() {
-            // open the pop-up window with the saved form data as a query string parameter
-            let URL = '../summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
+            let incdir = "<?php echo $GLOBALS['incdir'] ?>";
+            let URL = '/interface/patient_file/summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
                 + encodeURIComponent('medical_problem') + '&action=intake';
+            console.log(URL);
             dlgopen(URL, '_blank', 650, 500, '', 'Add/Edit Issue');
         }, 50);
     });
