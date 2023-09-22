@@ -300,7 +300,7 @@ $(function () {
             let URL = '../summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
                 + encodeURIComponent('medical_problem') + '&action=intake';
             dlgopen(URL, '_blank', 650, 500, '', 'Add/Edit Issue');
-        }, 500);
+        }, 50);
     });
 
 
