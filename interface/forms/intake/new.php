@@ -254,7 +254,7 @@ function submitme() {
             setTimeout(function() {
                 let incdir = "<?php echo $GLOBALS['incdir'] ?>";
                 // open the pop-up window with the saved form data as a query string parameter
-                let URL =  '/interface/patient_file/summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
+                let URL = '../../patient_file/summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
                     + encodeURIComponent('medical_problem') + '&action=intake';
                 console.log("new" + URL);
                 dlgopen(URL, '_blank', 650, 500, '', 'Add/Edit Issue');

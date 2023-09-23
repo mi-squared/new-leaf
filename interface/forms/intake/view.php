@@ -302,8 +302,10 @@ $(function () {
 
         // Wait for 500 milliseconds before opening the pop-up window
         setTimeout(function() {
+
             let incdir = "<?php echo $GLOBALS['incdir'] ?>";
-            let URL = '/interface/patient_file/summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
+            // open the pop-up window with the saved form data as a query string parameter
+            let URL = '../../patient_file/summary/add_edit_issue.php?issue=' + encodeURIComponent(0) + '&thistype='
                 + encodeURIComponent('medical_problem') + '&action=intake';
             console.log(URL);
             dlgopen(URL, '_blank', 650, 500, '', 'Add/Edit Issue');
