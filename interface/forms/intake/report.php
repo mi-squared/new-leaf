@@ -341,7 +341,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= "</div>";
 
     $data .= "<div class = 'presentingIssue'>";
-    $data .= PrintoutHelper::generate_title( 'header2', "Presenting Issue/Cheif Complaint") . "<div></div>";
+    $data .= PrintoutHelper::generate_title( 'header2', "Presenting Issue/Chief Complaint") . "<div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Presenting Issue/Chief Complaint", $patient_data['presenting_issue']);
     $data .= "</div>"; //end of intake
 
