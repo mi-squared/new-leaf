@@ -554,6 +554,7 @@ $ires = sqlStatement("SELECT id, type, title, begdate FROM lists WHERE " .
                                     }
                                     ?>
                                 </select>
+<!--                                ***nlbh add-->
                             </div>
                         </div>
                     </div>

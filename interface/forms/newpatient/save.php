@@ -105,6 +105,7 @@ if (!empty($encounter_type)) {
 
 if ($mode == 'new') {
     $encounter = generate_id();
+    //***nlbh edit (End time)
     addForm(
         $encounter,
         "New Patient Encounter",
