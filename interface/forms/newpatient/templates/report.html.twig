@@ -9,5 +9,14 @@
     {% if e.referringProvider %}
         <br>{{ "Referring Provider"|xlt }} - {{ e.referringProvider|text }}
     {% endif %}
+    {% if e.startTime %}
+        <br>{{ "Start Time"|xlt }} - {{ e.startTime|date("h:i a") }}
+    {% endif %}
+    {% if e.endTime %}
+        <br>{{ "End Time"|xlt }} - {{ e.endTime|date("h:i a") }}
+    {% endif %}
+    {% if e.totalTime %}
+        <br>{{ "Total Time"|xlt }} - {{ e.totalTime|date("h:i") }}
+    {% endif %}
 {% endfor %}
 </div>

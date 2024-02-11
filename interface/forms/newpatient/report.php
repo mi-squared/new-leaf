@@ -32,6 +32,12 @@ function newpatient_report($pid, $encounter, $cols, $id)
         $rawProvider = $userService->getUser($result["provider_id"]);
         $rawRefProvider = $userService->getUser($result["referring_provider_id"]);
         $calendar_category = (new AppointmentService())->getOneCalendarCategory($result['pc_catid']);
+        //***nlbh add
+        $startTime = new DateTime($result['date']);
+        $endTime = new DateTime($result['endTime']);
+        $diff = $endTime->diff($startTime)->format('%H:%I:%S');
+        //***nlbh end
+
         $reason = (!$hasAccess) ? false : $result['reason'];
         $provider = (!$hasAccess) ? false : $rawProvider['fname'] .
             (($rawProvider['mname'] ?? '') ? " " . $rawProvider['mname'] . " " : " ") .
@@ -43,6 +49,9 @@ function newpatient_report($pid, $encounter, $cols, $id)
         $posCode = ($posCode && $posCode != '00') ? $posCode : false;
         $facility_name = (!$hasAccess) ? false : $result['facility_name'];
 
+
+
+
         $encounters[] = [
             'category' => xl_appt_category($calendar_category[0]['pc_catname']),
             'reason' => $reason,
@@ -50,6 +59,9 @@ function newpatient_report($pid, $encounter, $cols, $id)
             'referringProvider' => $referringProvider,
             'posCode' => $posCode,
             'facility' => $facility_name,
+            'startTime' => $startTime,
+            'endTime' => $endTime,
+            'totalTime' =>  $diff
         ];
     }
     echo $t->render("templates/report.html.twig", ['encounters' => $encounters]);

@@ -57,6 +57,8 @@ $encounter_provider = $_POST['provider_id'] ?? null;
 $referring_provider_id = $_POST['referring_provider_id'] ?? null;
 //save therapy group if exist in external_id column
 $external_id = isset($_POST['form_gid']) ? $_POST['form_gid'] : '';
+//***nlbh add
+$endTime = DateTimeToYYYYMMDDHHMMSS($_POST['endTime']) ?? '';
 
 $discharge_disposition = $_POST['discharge_disposition'] ?? null;
 $discharge_disposition = $discharge_disposition != '_blank' ? $discharge_disposition : null;
@@ -91,6 +93,7 @@ if (!empty($encounter_type)) {
 
 if ($mode == 'new') {
     $encounter = generate_id();
+    //***nlbh edit (End time)
     $data = [
         'date' => $date,
         'onset_date' => $onset_date,
@@ -113,6 +116,7 @@ if ($mode == 'new') {
         'encounter_type_code' => $encounter_type_code,
         'encounter_type_description' => $encounter_type_description,
         'in_collection' => $in_collection,
+        'endTime' => $endTime
     ];
 
     $col_string = implode(" = ?, ", array_keys($data)) . " = ?";
@@ -132,8 +136,9 @@ if ($mode == 'new') {
     $datepart = "";
     $sqlBindArray = array();
     if (AclMain::aclCheckCore('encounters', 'date_a')) {
-        $datepart = "date = ?, ";
+        $datepart = "date = ?, endTime = ?,"; //***nlbh add
         $sqlBindArray[] = $date;
+        $sqlBindArray[] = $endTime; //***nlbh add
     }
     array_push(
         $sqlBindArray,
@@ -155,6 +160,7 @@ if ($mode == 'new') {
         $in_collection,
         $id
     );
+    //***Nlbh Edit
     $col_string = implode(" = ?, ", [
         'onset_date',
         'provider_id',
