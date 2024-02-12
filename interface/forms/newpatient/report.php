@@ -35,7 +35,7 @@ function newpatient_report($pid, $encounter, $cols, $id)
         //***nlbh add
         $startTime = new DateTime($result['date']);
         $endTime = new DateTime($result['endTime']);
-        $diff = $endTime->diff($startTime)->format('%H:%I:%S');
+        $diff = $endTime->diff($startTime)->format('%H:%I');
         //***nlbh end
 
         $reason = (!$hasAccess) ? false : $result['reason'];
