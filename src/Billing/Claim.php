@@ -226,7 +226,7 @@ class Claim
         //
         $this->payers = array();
         $this->payers[0] = array();
-        $query = "SELECT * FROM insurance_data WHERE pid = ? AND 
+        $query = "SELECT * FROM insurance_data WHERE pid = ? AND
             (date <= ? OR date IS NULL) AND (date_end >= ? OR date_end IS NULL) ORDER BY type ASC, date DESC";
         $dres = sqlStatement($query, array($this->pid, $encounter_date, $encounter_date));
         $prevtype = '';
@@ -1638,7 +1638,7 @@ class Claim
         $tmp = ($prockey < 0 || empty($this->procs[$prockey]['provider_id'])) ?
         $this->provider : $this->procs[$prockey]['provider'];
         if (empty($tmp['taxonomy'])) {
-            return '207Q00000X';
+            return ''; //***nlbh remove taxonomy code
         }
 
         return $this->x12Clean(trim($tmp['taxonomy']));
@@ -1677,7 +1677,7 @@ class Claim
     public function referrerTaxonomy()
     {
         if (empty($this->referrer['taxonomy'])) {
-            return '207Q00000X';
+            return ''; //***nlbh remove tanonomy coode
         }
 
         return $this->x12Clean(trim($this->referrer['taxonomy']));
@@ -1716,7 +1716,7 @@ class Claim
     public function supervisorTaxonomy()
     {
         if (empty($this->supervisor['taxonomy'])) {
-            return '207Q00000X';
+            return ''; //***nlbh remove taxonomy code
         }
 
         return $this->x12Clean(trim($this->supervisor['taxonomy']));
@@ -1765,7 +1765,7 @@ class Claim
     public function billingProviderTaxonomy()
     {
         if (empty($this->billing_prov_id['taxonomy'])) {
-            return '207Q00000X';
+            return ''; //***nlbh remove taxonomy code
         }
         return $this->x12Clean(trim($this->billing_prov_id['taxonomy']));
     }
