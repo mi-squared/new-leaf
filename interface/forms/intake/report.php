@@ -34,7 +34,7 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
          .hcontainer {
             display: grid;
-            grid-template-columns: repeat(1, 1500px);
+            grid-template-columns: 100%;
             grid-template-rows: auto;
             padding: 25px;
 
