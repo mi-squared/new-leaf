@@ -33,6 +33,7 @@ class POSRef
     function init_pos()
     {
         $pos = array();
+        $pos[] = array ("code" => "10","title" => xl("Telehealth"), "description" => "N/A"); //***NLBH Add
         $pos[] = array ("code" => "01","title" => xl("Pharmacy") . " **", "description" => "A facility or location where drugs and other medically related items and services are sold, dispensed, or otherwise provided directly to patients.");
         $pos[] = array ("code" => "02","title" => xl("Telehealth"), "description" => "A facility location where health services and health related services are provided or received, through a telecommunication system ");
         $pos[] = array ("code" => "03","title" => xl("School"), "description" => "A facility whose primary purpose is education.");
@@ -42,7 +43,7 @@ class POSRef
         $pos[] = array ("code" => "07","title" => xl("Tribal 638 Free-standing Facility"), "description" => "A facility or location owned and operated by a federally recognized American Indian or Alaska Native tribe or tribal organization under a 638 agreement, which provides diagnostic, therapeutic (surgical and non-surgical), and rehabilitation services to tribal members who do not require hospitalization.");
         $pos[] = array ("code" => "08","title" => xl("Tribal 638 Provider-based Facility"), "description" => "A facility or location owned and operated by a federally recognized American Indian or Alaska Native tribe or tribal organization under a 638 agreement, which provides diagnostic, therapeutic (surgical and non-surgical), and rehabilitation services to tribal members admitted as inpatients or outpatients.");
         $pos[] = array ("code" => "09","title" => xl("Prison Correctional Facility"), "description" => "A prison, jail, reformatory, work farm, detention center, or any other similar facility maintained by either Federal, State or local authorities for the purpose of confinement or rehabilitation of adult or juvenile criminal offenders.");
-        $pos[] = array ("code" => "10","title" => xl("Unassigned"), "description" => "N/A");
+        //***nlbh Removed code 10
         $pos[] = array ("code" => "11","title" => xl("Office"), "description" => "Location, other than a hospital, skilled nursing facility (SNF), military treatment facility, community health center, State or local public health clinic, or intermediate care facility (ICF), where the health professional routinely provides health examinations, diagnosis, and treatment of illness or injury on an ambulatory basis.");
         $pos[] = array ("code" => "12","title" => xl("Home"), "description" => "Location, other than a hospital or other facility, where the patient receives care in a private residence.");
         $pos[] = array ("code" => "13","title" => xl("Assisted Living Facility"), "description" => "Congregate residential facility with self-contained living units providing assessment of each resident’s needs and on-site support 24 hours a day, 7 days a week, with the capacity to deliver or arrange for services including some health care and other services.  (effective 10/1/03)");
