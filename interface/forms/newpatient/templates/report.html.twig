@@ -13,8 +13,7 @@
         {% if e.startTime and e.endTime %}
             <br>{{ "Start Time"|xlt }} - {{ e.startTime|date("h:i a") }}
             <br>{{ "End Time"|xlt }} - {{ e.endTime|date("h:i a") }}
-
-            <br>{{ "Total Time"|xlt }} - {{ totalTime|text }}
+            <br>{{ "Total Time"|xlt }} - {{ e.totalTime }}
         {% endif %}
     {% endif %}
 {% endfor %}
