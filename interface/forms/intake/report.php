@@ -37,6 +37,9 @@ function intake_report( $pid, $encounter, $cols, $id) {
             grid-template-columns: 100%;
             grid-template-rows: auto;
             padding: 25px;
+            background-color: #dbe1ff;
+            border: 1px solid black;
+
 
 
         }
