@@ -67,7 +67,11 @@ class LBF_Validation
                 $constraints[$id] = array_merge($required, $validation_arr);
             }
         }
+        if ($form_id == "DEM") {
 
+            $constraints["i1effective_date"]["presence"] = true;
+
+        }
         return json_encode($constraints);
     }
 }

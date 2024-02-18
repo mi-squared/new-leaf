@@ -42,6 +42,11 @@ foreach ($_POST as $key => $val) {
     if ($val == "MM/DD/YYYY") {
         $_POST[$key] = "";
     }
+    if ( ($key == 'i2effective_date' && $val == "") && ($_POST['i2provider'] != '')) { ?>
+        <script>
+            alert('Must Enter a Secondary Insurance Effective Date if secondary insurance exists!');
+        </script>
+    <?php }
 }
 
 // Update patient_data and employer_data:
