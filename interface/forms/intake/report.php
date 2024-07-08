@@ -325,7 +325,9 @@ function intake_report( $pid, $encounter, $cols, $id) {
             grid-column: 1/6;
         }
 
-
+        .noteField {
+            width: 65%;
+        }
 
 
 
@@ -355,100 +357,100 @@ function intake_report( $pid, $encounter, $cols, $id) {
     $data .= PrintoutHelper::generate_title( 'header3', "DANGER TO SELF/OTHERS") . "<div></div><div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Suicidal Thought/Behavior:",
         PrintoutHelper::getRating($patient_data['symptoms_suicidal_thought_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_suicidal_thought_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_suicidal_thought_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Homicidal Thought/Behavior:",
         PrintoutHelper::getRating($patient_data['symptoms_homicidal_thought_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_homicidal_thought_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_homicidal_thought_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Aggressiveness:",
         PrintoutHelper::getRating($patient_data['symptoms_aggressiveness_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_aggressiveness_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_aggressiveness_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Self-Injurious Behavior::",
         PrintoutHelper::getRating($patient_data['symptoms_self_injurious_behavior_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_self_injurious_behavior_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_self_injurious_behavior_text']);
 
 
     $data .= PrintoutHelper::generate_title( 'header3', "PSYCHOSIS") . "<div></div><div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Hallucinations:",
         PrintoutHelper::getRating($patient_data['symptoms_hallucinations_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_hallucinations_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_hallucinations_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Delusions",
         PrintoutHelper::getRating($patient_data['symptoms_delusions_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_delusions_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_delusions_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Paranoia:",
         PrintoutHelper::getRating($patient_data['symptoms_paranoia_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_paranoia_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_paranoia_text']);
 
 
     $data .= PrintoutHelper::generate_title( 'header3', "MOOD") . "<div></div><div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Depressed Mood",
         PrintoutHelper::getRating($patient_data['symptoms_depression_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_depression_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_depression_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Feelings of Worthlessness",
         PrintoutHelper::getRating($patient_data['symptoms_worthlessness_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_worthlessness_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_worthlessness_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Manic Thought/Behavior:",
         PrintoutHelper::getRating($patient_data['symptoms_manic_thought_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_manic_thought_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_manic_thought_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Intense or Abrupt Moodswings",
         PrintoutHelper::getRating($patient_data['symptoms_moodswings_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_moodswings_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_moodswings_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Irritability/Anger Issues:",
         PrintoutHelper::getRating($patient_data['symptoms_irritability_anger_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_irritability_anger_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_irritability_anger_text']);
 
 
     $data .= PrintoutHelper::generate_title( 'header3', "ANXIETY") . "<div></div><div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Anxiety:",
         PrintoutHelper::getRating($patient_data['symptoms_anxiety_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_anxiety_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_anxiety_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Phobias:",
         PrintoutHelper::getRating($patient_data['symptoms_phobias_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_phobias_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_phobias_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Obsessions/Compulsions::",
         PrintoutHelper::getRating($patient_data['symptoms_obsessions_compulsions_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_obsessions_compulsions_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_obsessions_compulsions_text']);
 
 
 
     $data .= PrintoutHelper::generate_title( 'header3', "PHYSICAL/COGNITIVE") . "<div></div><div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Change in Appetite:",
         PrintoutHelper::getRating($patient_data['symptoms_change_in_appetite_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_change_in_appetite_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_change_in_appetite_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Change in Energy Level:",
         PrintoutHelper::getRating($patient_data['symptoms_change_in_energy_level_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_change_in_energy_level_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_change_in_energy_level_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Sleep Disturbance:",
         PrintoutHelper::getRating($patient_data['symptoms_sleep_disturbance_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_sleep_disturbance_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_sleep_disturbance_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Decreased Concentration:",
         PrintoutHelper::getRating($patient_data['symptoms_decreased_concentration_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_decreased_concentration_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_decreased_concentration_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Disorganized/disorentated:",
         PrintoutHelper::getRating($patient_data['symptoms_disorganized_disoriented_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_disorganized_disoriented_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_disorganized_disoriented_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Learning Problem:",
         PrintoutHelper::getRating($patient_data['symptoms_learning_problem_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_learning_problem_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_learning_problem_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Medical Complication/Pain:",
         PrintoutHelper::getRating($patient_data['symptoms_medical_complication_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_medical_complication_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_medical_complication_text']);
 
 
 
@@ -456,88 +458,88 @@ function intake_report( $pid, $encounter, $cols, $id) {
 
     $data .= PrintoutHelper::generate_line_title_val("Social Withdrawal::",
         PrintoutHelper::getRating($patient_data['symptoms_social_withdrawal_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_social_withdrawal_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_social_withdrawal_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Binges/Purges:",
         PrintoutHelper::getRating($patient_data['symptoms_binges_purges_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_binges_purges_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_binges_purges_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Sexual Acting Out / Promiscuity:",
         PrintoutHelper::getRating($patient_data['symptoms_sexual_acting_out_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_sexual_acting_out_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_sexual_acting_out_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Distractibility/Impulsivity:",
         PrintoutHelper::getRating($patient_data['symptoms_distractibility_impulsivity_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_distractibility_impulsivity_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_distractibility_impulsivity_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Hyperactivity:",
         PrintoutHelper::getRating($patient_data['symptoms_hyperactivity_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_hyperactivity_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_hyperactivity_text']);
 
 
     $data .= PrintoutHelper::generate_line_title_val("Lying / Manipulative:",
         PrintoutHelper::getRating($patient_data['symptoms_lying_maniuplative_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_lying_maniuplative_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_lying_maniuplative_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Oppositional Behavior:",
         PrintoutHelper::getRating($patient_data['symptoms_oppositional_behavior_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_oppositional_behavior_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_oppositional_behavior_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Running Away:",
         PrintoutHelper::getRating($patient_data['symptoms_running_away_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_running_away_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_running_away_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Truancy/Absenteeism:",
         PrintoutHelper::getRating($patient_data['symptoms_truancy_absenteeism_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_truancy_absenteeism_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_truancy_absenteeism_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Property Destruction:",
         PrintoutHelper::getRating($patient_data['symptoms_property_destruction_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_property_destruction_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_property_destruction_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Fire Setting::",
         PrintoutHelper::getRating($patient_data['symptoms_fire_setting_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_fire_setting_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_fire_setting_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Cruelty to Animals:",
         PrintoutHelper::getRating($patient_data['symptoms_cruelty_to_animals_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_cruelty_to_animals_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_cruelty_to_animals_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Stealing:",
         PrintoutHelper::getRating($patient_data['symptoms_stealing_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_stealing_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_stealing_text']);
 
 
     $data .= PrintoutHelper::generate_title( 'header3', "ADDICTIVE BEHAVIORS") . "<div></div><div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Gambling:",
         PrintoutHelper::getRating($patient_data['symptoms_gambling_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_gambling_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_gambling_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Internet:",
         PrintoutHelper::getRating($patient_data['symptoms_internet_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_internet_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_internet_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Gaming:",
         PrintoutHelper::getRating($patient_data['symptoms_gaming_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_gaming_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_gaming_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Other Issues:",
         PrintoutHelper::getRating($patient_data['symptoms_behavioral_other_issues_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_behavioral_other_issues_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_behavioral_other_issues_text']);
 
 
     $data .= PrintoutHelper::generate_title( 'header3', "OTHER ISSUES") . "<div></div><div></div>";
     $data .= PrintoutHelper::generate_line_title_val("Other",
         PrintoutHelper::getRating($patient_data['symptoms_other1_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_other1_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_other1_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Other:",
         PrintoutHelper::getRating($patient_data['symptoms_other2_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_other2_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_other2_text']);
 
     $data .= PrintoutHelper::generate_line_title_val("Other:",
         PrintoutHelper::getRating($patient_data['symptoms_other3_rating']));
-    $data .= PrintoutHelper::formatNoteField($patient_data['symptoms_other3_text']);
+    $data .= PrintoutHelper::formatNoteField('noteField', $patient_data['symptoms_other3_text']);
 
 
 

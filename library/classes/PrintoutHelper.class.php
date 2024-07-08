@@ -78,9 +78,9 @@ class PrintoutHelper extends ORDataObject
 
     }
 
-    public static function formatNoteField($string, $length = 2): string {
+    public static function formatNoteField($class='', $string): string {
 
-        return "<div>$string</div>";
+        return "<div class='$class'>$string</div>";
     }
 
     public static function newLine($num = 2){
